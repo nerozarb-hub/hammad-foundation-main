@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  /* Editorial Palette */
+  --color-brand-sand: #F8F9FA;        /* Main Background - warm off-white */
+  --color-brand-charcoal: #0C0F13;    /* Text, Ink */
+  --color-brand-nero: #0F9D58;        /* Success, Action, Growth */
+  --color-brand-white: #FFFFFF;       /* Cards */
+  --color-brand-rust: #C2410C;        /* Urgency */
+  --color-brand-gold: #D97706;        /* Badges */
+  --color-brand-gray-50: #F3F4F6;
+  --color-brand-gray-100: #E5E7EB;
+    --color-brand-gray-500: #6B7280;
+    --color-brand-blue: #EEF2FF;
+
+    --color-background: var(--color-brand-sand);
+  --color-foreground: var(--color-brand-charcoal);
+
+  --color-border: rgba(12, 15, 19, 0.08);
+  --color-input: rgba(12, 15, 19, 0.08);
+  
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px -2px rgba(0,0,0,0.08), 0 2px 6px -2px rgba(0,0,0,0.05);
+  --shadow-lg: 0 8px 24px -4px rgba(0,0,0,0.1), 0 4px 8px -4px rgba(0,0,0,0.06);
+  --shadow-card: 0 4px 16px -2px rgba(0,0,0,0.08), 0 2px 6px -2px rgba(0,0,0,0.04);
+  --shadow-button: 0 2px 8px 0 rgba(15, 157, 88, 0.3);
+  --shadow-elevated: 0 12px 32px -8px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.06);
+}
+
+@layer base {
+  * {
+    @apply border-brand-charcoal/10;
+  }
+
+  body {
+    @apply bg-brand-sand text-brand-charcoal font-sans antialiased;
+    line-height: 1.7;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold;
+    line-height: 1.25;
+  }
+
+  /* Centered Container — wide desktop layout */
+  .container {
+    @apply max-w-[1400px] mx-auto px-6 lg:px-12;
+  }
+
+  /* Editorial Card Base */
+  .editorial-card {
+    @apply bg-white border border-brand-charcoal/5 p-8 shadow-card transition-all duration-300 rounded-2xl;
+  }
+  
+  .editorial-card:hover {
+    @apply border-brand-nero/20 shadow-elevated -translate-y-0.5;
+  }
+
+  /* Button Base */
+  .btn-brand {
+    @apply inline-flex items-center justify-center bg-brand-nero text-white px-8 py-4 font-[900] rounded-xl hover:bg-brand-nero/90 hover:-translate-y-0.5 transition-all active:translate-y-0 active:border-b-0 shadow-button hover:shadow-[0_8px_25px_0_rgba(15,157,88,0.45)] border-b-4 border-brand-nero/30;
+  }
+
+  .btn-ink {
+    @apply inline-flex items-center justify-center bg-brand-charcoal text-white px-8 py-4 font-[900] rounded-xl hover:bg-brand-charcoal/90 hover:-translate-y-0.5 transition-all active:translate-y-0 active:border-b-0 shadow-lg border-b-4 border-black/30;
+  }
+
+  /* Depth Utilities */
+  .section-white {
+    @apply bg-white shadow-sm;
+  }
+
+    .section-gray {
+      @apply bg-brand-gray-50;
+    }
+
+  .section-ink {
+    @apply bg-brand-charcoal text-white shadow-lg;
+  }
+
+  .shadow-premium {
+    @apply shadow-elevated;
+  }
+
+  .shadow-success {
+    @apply shadow-[0_8px_24px_rgba(15,157,88,0.15)];
+  }
+}
+
+/* ANTI-PATTERNS (EXPLICITLY REMOVED) */
+/* No Glassmorphism */
+/* No Bento Grids (Use Grid with distinct editorial hierarchy) */
+/* No Gradients (Subtle ones allowed for depth) */
