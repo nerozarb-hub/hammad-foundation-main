@@ -1,9 +1,5 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-// Utility directly here if needed, but imported from lib/utils
 import { cn } from "@/lib/utils"
 
 export interface ButtonProps
@@ -22,25 +18,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         let variantStyles = ""
         switch (variant) {
             case "default":
-                variantStyles = "bg-brand-nero text-white hover:bg-brand-nero/90 hover:-translate-y-0.5 shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] hover:shadow-[0_6px_20px_0_rgba(15,157,88,0.45)] border-b-4 border-brand-nero/30"
-                break
             case "brand":
                 variantStyles = "bg-brand-nero text-white hover:bg-brand-nero/90 hover:-translate-y-0.5 shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] hover:shadow-[0_6px_20px_0_rgba(15,157,88,0.45)] border-b-4 border-brand-nero/30"
                 break
             case "secondary":
                 variantStyles = "bg-brand-charcoal text-white hover:bg-brand-charcoal/90 hover:-translate-y-0.5 shadow-lg border-b-4 border-black/30"
                 break
-            case "brand":
-                variantStyles = "bg-brand-nero text-white hover:bg-brand-nero/90 shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] border-b-4 border-brand-nero/30"
-                break
             case "destructive":
                 variantStyles = "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md"
                 break
             case "outline":
                 variantStyles = "border-2 border-brand-charcoal bg-transparent text-brand-charcoal hover:bg-brand-charcoal hover:text-white"
-                break
-            case "secondary":
-                variantStyles = "bg-brand-charcoal text-white hover:bg-brand-charcoal/90 shadow-lg border-b-4 border-black/30"
                 break
             case "ghost":
                 variantStyles = "hover:bg-brand-charcoal/5 text-brand-charcoal"

@@ -1,97 +1,90 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Minus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Plus, Minus, HelpCircle } from "lucide-react";
 
-const faqs = [
+interface FAQItem {
+    q: string;
+    a: string;
+}
+
+const faqs: FAQItem[] = [
     {
-        question: "How do I know the money actually goes to the student?",
-        answer: "We send you photo receipts. Every month. Tuition receipt with your name on it. Lunch distribution photos. Attendance sheet. If we don't send proof, stop paying. Simple.",
+        q: "How do I know the money actually goes to the student?",
+        a: "We send you photographic receipts every single month: your student's official tuition receipt with their registration code, daily cafeteria lunch distribution photos, and term attendance records. If you do not receive verifiable proof, you can cancel immediately. Simple as that.",
     },
     {
-        question: "What if the student drops out?",
-        answer: "We assign you a new student immediately. Your $30 always goes to a kid. We have a waitlist of 376 students right now.",
+        q: "What if my sponsored student drops out or their family moves?",
+        a: "We immediately re-assign your sponsorship to another child on our waitlist so not a single dollar is lost. We have a waitlist of 376 students right now in Lahore waiting for a Guardian.",
     },
     {
-        question: "Is this tax-deductible?",
-        answer: "In Pakistan: Yes (FBR verified Zakat-eligible). In US/UK: Not yet (we're working on 501c3/UK charity status). For now, it's not about the tax break. It's about the kid.",
+        q: "Is this eligible for Zakat?",
+        a: "Yes, 100%. Education expenses, school uniforms, books, and daily hot meals for underprivileged children qualify under Zakat guidelines. Hammad Foundation is FBR-registered and Zakat-verified.",
     },
     {
-        question: "Can I meet my student?",
-        answer: "If you visit Lahore, yes. We arrange school visits. Most Guardians are overseas, so WhatsApp videos work better.",
+        q: "Can I meet my student in person if I visit Lahore?",
+        a: "Absolutely. Our campus doors on Barki Road, Lahore are open Monday through Saturday. No appointment is needed for active Guardians—just walk in and ask for Sir Ali Choudhary. For overseas Guardians, we provide direct WhatsApp video messages.",
     },
     {
-        question: "What if I can't afford $30/month anymore?",
-        answer: "Cancel anytime. No guilt. No questions. Life happens. We'll find another Guardian for your student.",
+        q: "What if I need to cancel my $30/month sponsorship?",
+        a: "You can cancel anytime with one click or a simple message. No awkward questions, no guilt trips. Life circumstances change. When a Guardian cancels, we step in with reserve funds and find a new Guardian.",
     },
     {
-        question: "Do you take Zakat?",
-        answer: "Yes. Hammad Foundation is FBR-approved for Zakat. Education expenses are 100% Zakat-eligible.",
+        q: "Why sponsor 1-to-1 instead of donating to a large pooled NGO?",
+        a: "Large organizations do great work, but your donation enters a massive corporate pool where significant percentages go toward marketing, gala events, and executive salaries. With Hammad Foundation, you know your student's name, see their classroom video every week, and watch them rise.",
     },
     {
-        question: "Why not just give to a big NGO like TCF?",
-        answer: "TCF is great. But you're donating to \"a program.\" With us, you sponsor YOUR student. You see their face. You get updates. It's personal, not pooled.",
-    },
-    {
-        question: "This sounds too good to be true.",
-        answer: "Text Ali Choudhary (Director): +92 300 8099015. Ask him anything. He replies himself. If he doesn't reply in 24 hours, don't donate. Fair?",
+        q: "This sounds almost too good to be true.",
+        a: "Don't take our word for it. Message Director Sir Ali Choudhary directly on WhatsApp at +92 300 8099015. Ask for a live camera walkthrough of the school today. If you aren't convinced, don't donate.",
     },
 ];
 
 export function FAQ() {
-    const [openIndex, setOpenIndex] = useState<number | null>(null);
+    const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+    const toggle = (idx: number) => {
+        setOpenIndex(openIndex === idx ? null : idx);
+    };
 
     return (
-        <section id="faq" className="py-16 bg-brand-gray-50/30 border-b border-brand-charcoal/5">
+        <section id="faq" className="py-20 md:py-28 bg-brand-gray-50/50 border-t border-brand-charcoal/5">
             <div className="container max-w-4xl">
-                <div className="mb-12 text-center">
-                    <h2 className="text-3xl lg:text-[44px] font-black text-brand-charcoal leading-[1.15] tracking-tight mb-4">
-                        &ldquo;Yeah, But...&rdquo;{" "}
-                        <span className="text-brand-nero italic">We&rsquo;ve Heard It All</span>
+                <div className="text-center mb-16">
+                    <span className="text-xs font-black uppercase tracking-[0.25em] text-brand-nero bg-brand-nero/10 px-3.5 py-1.5 rounded-full">
+                        Honest Answers
+                    </span>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-[900] text-brand-charcoal mt-4 mb-3 tracking-tight">
+                        &ldquo;Yeah, But...&rdquo; <span className="text-brand-nero italic">We&apos;ve Heard It All</span>
                     </h2>
-                    <p className="text-[11px] font-black text-brand-charcoal/30 uppercase tracking-[0.3em]">
-                        Answers to your toughest questions:
+                    <p className="text-base text-brand-charcoal/60 font-medium">
+                        Direct answers to the toughest questions about transparency, fund usage, and student tracking.
                     </p>
                 </div>
 
-                <div className="space-y-3">
-                    {faqs.map((faq, index) => (
+                <div className="space-y-4">
+                    {faqs.map((faq, i) => (
                         <div
-                            key={index}
-                            className="border border-brand-charcoal/5 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md hover:border-brand-nero/20 transition-all"
+                            key={i}
+                            className="border border-brand-charcoal/10 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md hover:border-brand-nero/30 transition-all"
                         >
                             <button
-                                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                                className="w-full flex items-center justify-between p-5 text-left"
+                                type="button"
+                                onClick={() => toggle(i)}
+                                className="w-full flex items-center justify-between p-6 text-left"
                             >
-                                <span className="font-black text-brand-charcoal text-base pr-8">
-                                    {faq.question}
+                                <span className="font-black text-brand-charcoal text-base md:text-lg pr-6">
+                                    {faq.q}
                                 </span>
-                                <div
-                                    className={cn(
-                                        "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all",
-                                        openIndex === index
-                                            ? "bg-brand-nero text-white"
-                                            : "bg-brand-charcoal/5 text-brand-charcoal/40"
-                                    )}
-                                >
-                                    <Plus className={cn("w-4 h-4", openIndex === index && "hidden")} />
-                                    <Minus className={cn("w-4 h-4", openIndex !== index && "hidden")} />
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-brand-charcoal/5 text-brand-charcoal">
+                                    {openIndex === i ? <Minus size={16} /> : <Plus size={16} />}
                                 </div>
                             </button>
-                            <div
-                                className={cn(
-                                    "transition-all duration-300 overflow-hidden",
-                                    openIndex === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                                )}
-                            >
-                                <div className="px-5 pb-5 border-t border-brand-charcoal/5">
-                                    <p className="text-sm text-brand-charcoal/60 leading-relaxed font-medium pt-4">
-                                        {faq.answer}
-                                    </p>
+
+                            {openIndex === i && (
+                                <div className="px-6 pb-6 pt-2 border-t border-brand-charcoal/5 text-sm md:text-base text-brand-charcoal/70 leading-relaxed font-medium">
+                                    {faq.a}
                                 </div>
-                            </div>
+                            )}
                         </div>
                     ))}
                 </div>

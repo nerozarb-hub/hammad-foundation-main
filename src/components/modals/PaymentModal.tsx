@@ -1,137 +1,324 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Smartphone, Check, ArrowRight, Heart, Landmark, CreditCard, ShieldCheck, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useState } from "react";
+import { ArrowRight, Loader2, ShieldCheck, X } from "lucide-react";
+import {
+  getSupportOption,
+  paymentDisclosure,
+  relationshipDisclosure,
+  supportOptions,
+  type SupportOptionId,
+} from "@/config/ecosystem";
 
 interface PaymentModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    selectedAmount: number | "custom";
-    productName: string;
+  isOpen: boolean;
+  onClose: () => void;
+  supportId?: SupportOptionId | string;
 }
 
-export function PaymentModal({ isOpen, onClose, selectedAmount, productName }: PaymentModalProps) {
-    const [step, setStep] = useState<"method" | "bank" | "success">("method");
+export function PaymentModal({ isOpen, onClose, supportId }: PaymentModalProps) {
+  const initialOption = supportId ? getSupportOption(supportId) : supportOptions[2];
 
-    if (!isOpen) return null;
+  const [selectedId, setSelectedId] = useState<string>(initialOption?.id || "guardian-monthly");
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [donorName, setDonorName] = useState<string>("");
+  const [donorEmail, setDonorEmail] = useState<string>("");
+  const [donorPhone, setDonorPhone] = useState<string>("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-    const methods = [
-        { id: "bank", name: "Bank Transfer", icon: Landmark, description: "Tap to choose", color: "text-brand-nero" },
-        { id: "mobile", name: "JazzCash / EasyPaisa", icon: Smartphone, description: "Tap to choose", color: "text-brand-nero" },
-        { id: "stripe", name: "Card (Stripe)", icon: CreditCard, description: "Tap to choose", color: "text-brand-nero" }
-    ];
+  const [state, setState] = useState<"idle" | "submitting" | "redirecting" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-brand-charcoal/40 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose} />
+  if (!isOpen) return null;
 
-            <div className="relative w-full max-w-lg bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-                {/* Header */}
-                <div className="flex justify-between items-center p-8">
-                    <h3 className="text-[20px] font-black text-brand-charcoal tracking-tight">How Would You Like to Send?</h3>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-brand-gray-50 transition-colors">
-                        <X className="w-6 h-6 text-brand-charcoal/20" />
-                    </button>
-                </div>
+  const currentOption = getSupportOption(selectedId);
+  const effectiveAmount = selectedId === "custom"
+    ? Number(customAmount) || 0
+    : currentOption?.amountPkr || 9000;
 
-                <div className="px-8 pb-10">
-                    {step === "method" && (
-                        <div className="space-y-6">
-                            <p className="text-[15px] font-bold text-brand-charcoal/40 uppercase tracking-widest text-center mb-8">
-                                SENDING <span className="text-brand-nero">{selectedAmount === "custom" ? "A CUSTOM AMOUNT" : `$${selectedAmount}`}</span> FOR {productName.toUpperCase()}
-                            </p>
+  const formattedPkr = new Intl.NumberFormat("en-PK", {
+    style: "currency",
+    currency: "PKR",
+    maximumFractionDigits: 0,
+  }).format(effectiveAmount);
 
-                            <div className="grid gap-4">
-                                {methods.map((m) => (
-                                    <button 
-                                        key={m.id}
-                                        onClick={() => m.id === "stripe" ? window.open("https://buy.stripe.com/test", "_blank") : setStep("bank")}
-                                        className="flex items-center justify-between p-6 bg-white border-2 border-brand-charcoal/5 rounded-2xl hover:border-brand-nero/30 hover:bg-brand-gray-50 transition-all text-left group"
-                                    >
-                                        <div className="flex items-center gap-5">
-                                            <div className={cn("w-14 h-14 rounded-xl bg-brand-nero/5 flex items-center justify-center transition-colors group-hover:bg-brand-nero group-hover:text-white", m.color)}>
-                                                <m.icon className="w-7 h-7" />
-                                            </div>
-                                            <div>
-                                                <span className="block font-black text-[18px] text-brand-charcoal">{m.name}</span>
-                                                <span className="block text-[13px] font-bold text-brand-charcoal/40 uppercase tracking-widest">{m.description}</span>
-                                            </div>
-                                        </div>
-                                        <ArrowRight className="w-6 h-6 text-brand-charcoal/10 group-hover:text-brand-nero group-hover:translate-x-1 transition-all" />
-                                    </button>
-                                ))}
-                            </div>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-                            <div className="pt-8 text-center">
-                                <p className="text-[13px] font-bold text-brand-charcoal/40 flex items-center justify-center gap-2">
-                                    <ShieldCheck className="w-4 h-4 text-brand-nero" />
-                                    SECURE PAYMENT GATEWAY
-                                </p>
-                            </div>
-                        </div>
-                    )}
+    if (state === "submitting" || state === "redirecting") {
+      return; // prevent double click / double submission
+    }
 
-                    {step === "bank" && (
-                        <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
-                            <div className="bg-brand-gray-50 rounded-2xl p-8 space-y-6 border border-brand-charcoal/5">
-                                <div className="space-y-1">
-                                    <p className="text-[12px] font-black text-brand-charcoal/40 uppercase tracking-widest">Bank Name</p>
-                                    <p className="text-[18px] font-black text-brand-charcoal">JS Bank</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[12px] font-black text-brand-charcoal/40 uppercase tracking-widest">Account Title</p>
-                                    <p className="text-[18px] font-black text-brand-charcoal">HAMMAD FOUNDATION</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[12px] font-black text-brand-charcoal/40 uppercase tracking-widest">IBAN</p>
-                                    <p className="text-[18px] font-black text-brand-charcoal font-mono tracking-tight">PK09 JSBL 9606 0000 0222 8148</p>
-                                </div>
-                                <div className="pt-4 border-t border-brand-charcoal/10">
-                                    <p className="text-[12px] font-black text-brand-charcoal/40 uppercase tracking-widest mb-1">JazzCash / Raast</p>
-                                    <p className="text-[18px] font-black text-brand-charcoal">+92 321 4908898</p>
-                                </div>
-                            </div>
+    const errors: Record<string, string> = {};
+    if (!donorName.trim()) {
+      errors.donorName = "Please enter your full name.";
+    } else if (donorName.trim().length < 2) {
+      errors.donorName = "Name must be at least 2 characters.";
+    }
 
-                            <div className="space-y-4">
-                                <Button 
-                                    className="w-full h-20 bg-brand-nero hover:bg-brand-nero/90 text-white font-black text-[18px] rounded-2xl shadow-xl flex items-center justify-center gap-4 transition-all active:scale-[0.98]" 
-                                    onClick={() => {
-                                        const msg = `Salaam! I've just sent a payment of ${selectedAmount === "custom" ? "a custom amount" : `$${selectedAmount}`} for ${productName}. Here is the receipt.`;
-                                        window.open(`https://wa.me/923214908898?text=${encodeURIComponent(msg)}`, "_blank");
-                                        setStep("success");
-                                    }}
-                                >
-                                    <Smartphone className="w-6 h-6" />
-                                    WANT A RECEIPT ON WHATSAPP? TAP HERE
-                                </Button>
-                                
-                                <button onClick={() => setStep("method")} className="w-full text-center text-[12px] font-black uppercase tracking-widest text-brand-charcoal/20 hover:text-brand-charcoal transition-colors">
-                                    Change payment method
-                                </button>
-                            </div>
-                        </div>
-                    )}
+    if (selectedId === "custom") {
+      const num = Number(customAmount);
+      if (!customAmount || isNaN(num) || num < 100) {
+        errors.amount = "Minimum donation amount is PKR 100.";
+      } else if (num > 5000000) {
+        errors.amount = "Maximum donation amount is PKR 5,000,000.";
+      }
+    }
 
-                    {step === "success" && (
-                        <div className="text-center py-10 space-y-10 animate-in zoom-in-95 duration-500">
-                            <div className="w-24 h-24 bg-brand-nero rounded-full flex items-center justify-center mx-auto text-white shadow-2xl shadow-brand-nero/20">
-                                <Check className="w-12 h-12 stroke-[4]" />
-                            </div>
-                            <div className="space-y-4">
-                                <h4 className="text-[32px] font-black text-brand-charcoal tracking-tight leading-none">Thank you!</h4>
-                                <p className="text-brand-charcoal/60 text-[18px] font-bold leading-relaxed max-w-xs mx-auto">
-                                    We got your payment. You'll hear from us soon.
-                                </p>
-                            </div>
-                            <Button onClick={onClose} className="w-full h-16 bg-brand-nero text-white text-[18px] font-black rounded-2xl hover:bg-brand-nero/90 transition-all shadow-xl">
-                                CLOSE
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </div>
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+    setState("submitting");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/paypro/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: effectiveAmount,
+          donorName: donorName.trim(),
+          donorEmail: donorEmail.trim() || undefined,
+          donorPhone: donorPhone.trim() || undefined,
+          supportOptionId: selectedId,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.success || !data?.click2PayUrl) {
+        throw new Error(data?.error || "Unable to initiate payment with PayPro. Please try again.");
+      }
+
+      setState("redirecting");
+
+      // Redirect donor to PayPro Click2Pay hosted checkout page
+      window.location.assign(data.click2PayUrl);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Payment initialization failed";
+      setErrorMessage(msg);
+      setState("error");
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] grid place-items-center bg-black/70 p-4 backdrop-blur-sm"
+      role="presentation"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget && state !== "submitting" && state !== "redirecting") {
+          onClose();
+        }
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="support-dialog-title"
+        className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl md:p-8"
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 border-b border-brand-charcoal/10 pb-5">
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-brand-nero">
+              Official Donation Checkout
+            </p>
+            <h2 id="support-dialog-title" className="mt-1 text-2xl font-black text-brand-charcoal md:text-3xl">
+              Hammad Foundation Support
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={state === "submitting" || state === "redirecting"}
+            aria-label="Close support dialog"
+            className="rounded-full bg-brand-gray-50 p-2 text-brand-charcoal/60 hover:bg-brand-gray-100 hover:text-brand-charcoal disabled:opacity-50"
+          >
+            <X size={20} />
+          </button>
         </div>
-    );
+
+        {/* Operational & Payment Disclosure */}
+        <div className="mt-5 rounded-2xl border border-brand-nero/20 bg-brand-nero/5 p-4 text-xs leading-relaxed text-brand-charcoal/80">
+          <p className="font-bold text-brand-nero flex items-center gap-1.5 mb-1">
+            <ShieldCheck size={16} /> Transparent Governance & Payment Notice
+          </p>
+          <p className="text-brand-charcoal/70">{relationshipDisclosure}</p>
+          <div className="mt-2.5 grid grid-cols-2 gap-2 border-t border-brand-nero/10 pt-2 text-[11px]">
+            <div>
+              <span className="font-bold text-brand-charcoal/50">Payment recipient:</span>
+              <p className="font-bold text-brand-charcoal">{paymentDisclosure.recipient}</p>
+            </div>
+            <div>
+              <span className="font-bold text-brand-charcoal/50">Designated project:</span>
+              <p className="font-bold text-brand-charcoal">{paymentDisclosure.designation}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Redirecting Overlay State */}
+        {state === "redirecting" && (
+          <div className="my-8 flex flex-col items-center justify-center py-6 text-center">
+            <Loader2 className="animate-spin text-brand-nero" size={48} />
+            <h3 className="mt-4 text-xl font-black text-brand-charcoal">
+              Redirecting to PayPro Click2Pay...
+            </h3>
+            <p className="mt-2 text-sm text-brand-charcoal/60">
+              Please wait while we transfer you securely to PayPro&apos;s hosted payment page.
+            </p>
+          </div>
+        )}
+
+        {/* Form Body */}
+        {state !== "redirecting" && (
+          <form onSubmit={handleSubmit} className="mt-5 space-y-5">
+            {/* Support Tier Selection */}
+            <div>
+              <label className="block text-xs font-black uppercase tracking-wider text-brand-charcoal/60">
+                1. Select Support Designation
+              </label>
+              <div className="mt-2.5 grid gap-2.5 sm:grid-cols-3">
+                {supportOptions.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedId(opt.id);
+                      setFormErrors((prev) => ({ ...prev, amount: "" }));
+                    }}
+                    className={`flex flex-col rounded-xl border p-3 text-left transition-all ${
+                      selectedId === opt.id
+                        ? "border-brand-nero bg-brand-nero/10 text-brand-charcoal ring-2 ring-brand-nero"
+                        : "border-brand-charcoal/10 bg-white hover:border-brand-charcoal/30"
+                    }`}
+                  >
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-brand-charcoal/50">
+                      {opt.recurring ? "Monthly" : "One-time"}
+                    </span>
+                    <span className="mt-1 text-sm font-black">{opt.label}</span>
+                    <span className="mt-2 text-lg font-black text-brand-nero">
+                      PKR {opt.amountPkr.toLocaleString()}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Custom amount toggle */}
+              <button
+                type="button"
+                onClick={() => setSelectedId("custom")}
+                className={`mt-2 text-xs font-bold underline underline-offset-2 ${
+                  selectedId === "custom" ? "text-brand-nero font-black" : "text-brand-charcoal/60 hover:text-brand-charcoal"
+                }`}
+              >
+                Or enter a custom PKR donation amount
+              </button>
+
+              {selectedId === "custom" && (
+                <div className="mt-2">
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-brand-charcoal/50">
+                      PKR
+                    </span>
+                    <input
+                      type="number"
+                      min="100"
+                      max="5000000"
+                      placeholder="e.g. 5000"
+                      value={customAmount}
+                      onChange={(e) => setCustomAmount(e.target.value)}
+                      className="w-full rounded-xl border border-brand-charcoal/20 py-2.5 pl-14 pr-4 font-bold text-brand-charcoal focus:border-brand-nero focus:outline-none focus:ring-2 focus:ring-brand-nero/20"
+                    />
+                  </div>
+                  {formErrors.amount && (
+                    <p className="mt-1 text-xs font-bold text-red-600">{formErrors.amount}</p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Donor Information */}
+            <div className="space-y-3">
+              <label className="block text-xs font-black uppercase tracking-wider text-brand-charcoal/60">
+                2. Donor Information
+              </label>
+
+              <div>
+                <input
+                  type="text"
+                  placeholder="Full Name *"
+                  required
+                  value={donorName}
+                  onChange={(e) => setDonorName(e.target.value)}
+                  className={`w-full rounded-xl border px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 ${
+                    formErrors.donorName
+                      ? "border-red-400 focus:ring-red-200"
+                      : "border-brand-charcoal/20 focus:border-brand-nero focus:ring-brand-nero/20"
+                  }`}
+                />
+                {formErrors.donorName && (
+                  <p className="mt-1 text-xs font-bold text-red-600">{formErrors.donorName}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email Address (for receipt)"
+                    value={donorEmail}
+                    onChange={(e) => setDonorEmail(e.target.value)}
+                    className="w-full rounded-xl border border-brand-charcoal/20 px-4 py-2.5 text-sm font-medium focus:border-brand-nero focus:outline-none focus:ring-2 focus:ring-brand-nero/20"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="Mobile Number (e.g. 03001234567)"
+                    value={donorPhone}
+                    onChange={(e) => setDonorPhone(e.target.value)}
+                    className="w-full rounded-xl border border-brand-charcoal/20 px-4 py-2.5 text-sm font-medium focus:border-brand-nero focus:outline-none focus:ring-2 focus:ring-brand-nero/20"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {state === "error" && errorMessage && (
+              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-700">
+                {errorMessage}
+              </div>
+            )}
+
+            {/* Submit CTA */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={state === "submitting"}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-nero px-6 py-4 text-base font-black text-white shadow-lg transition-all hover:bg-brand-nero/90 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60"
+              >
+                {state === "submitting" ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Connecting to PayPro...
+                  </>
+                ) : (
+                  <>
+                    Proceed to Pay {formattedPkr} via PayPro <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+              <p className="mt-2 text-center text-[11px] text-brand-charcoal/50">
+                Secured with 256-bit encryption. Card, 1Link, and mobile banking options available on Click2Pay.
+              </p>
+            </div>
+          </form>
+        )}
+      </section>
+    </div>
+  );
 }
+
