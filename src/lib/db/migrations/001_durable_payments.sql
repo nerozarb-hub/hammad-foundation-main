@@ -49,3 +49,13 @@ BEGIN
     REVOKE ALL ON donations, payment_rate_limits FROM authenticated;
   END IF;
 END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'donations' AND policyname = 'hammad_server_access') THEN
+    CREATE POLICY hammad_server_access ON donations FOR ALL TO PUBLIC USING (true) WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'payment_rate_limits' AND policyname = 'hammad_rate_limit_server_access') THEN
+    CREATE POLICY hammad_rate_limit_server_access ON payment_rate_limits FOR ALL TO PUBLIC USING (true) WITH CHECK (true);
+  END IF;
+END $$;
