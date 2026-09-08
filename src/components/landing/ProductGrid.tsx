@@ -35,9 +35,9 @@ export function ProductGrid({ onSelectPlan }: ProductGridProps) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+                <div className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 lg:gap-6 xl:grid-cols-4">
                     {/* Tier 1: $15 The Starter */}
-                    <div className="bg-white rounded-3xl p-7 md:p-8 flex flex-col justify-between border border-brand-charcoal/10 shadow-sm hover:shadow-xl hover:border-brand-nero/30 transition-all duration-300">
+                    <div className="flex min-h-[34rem] flex-col justify-between rounded-3xl border border-brand-charcoal/10 bg-white p-6 shadow-sm transition-all duration-300 hover:border-brand-nero/30 hover:shadow-xl md:p-7">
                         <div>
                             <span className="inline-flex items-center gap-1 bg-brand-nero/10 text-brand-nero text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
                                 The Starter
@@ -77,7 +77,7 @@ export function ProductGrid({ onSelectPlan }: ProductGridProps) {
                     </div>
 
                     {/* Tier 2: $25 Confidence */}
-                    <div className="bg-white rounded-3xl p-7 md:p-8 flex flex-col justify-between border border-brand-charcoal/10 shadow-sm hover:shadow-xl hover:border-brand-nero/30 transition-all duration-300">
+                    <div className="flex min-h-[34rem] flex-col justify-between rounded-3xl border border-brand-charcoal/10 bg-white p-6 shadow-sm transition-all duration-300 hover:border-brand-nero/30 hover:shadow-xl md:p-7">
                         <div>
                             <span className="inline-flex items-center gap-1 bg-brand-nero/10 text-brand-nero text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
                                 Dignity &amp; Pride
@@ -117,7 +117,7 @@ export function ProductGrid({ onSelectPlan }: ProductGridProps) {
                     </div>
 
                     {/* Tier 3: $30/mo GUARDIAN - FEATURED */}
-                    <div className="bg-brand-charcoal rounded-3xl p-7 md:p-8 flex flex-col justify-between border-2 border-brand-nero relative shadow-2xl scale-100 lg:scale-105 z-10">
+                    <div className="relative z-10 flex min-h-[36rem] flex-col justify-between rounded-3xl border-2 border-brand-nero bg-brand-charcoal p-6 shadow-2xl transition-transform duration-300 lg:-translate-y-2 md:p-7">
                         <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
                             <Crown className="w-32 h-32 text-white" />
                         </div>
@@ -177,7 +177,7 @@ export function ProductGrid({ onSelectPlan }: ProductGridProps) {
                     </div>
 
                     {/* Tier 4: Custom Legacy Tier */}
-                    <div className="bg-white rounded-3xl p-7 md:p-8 flex flex-col justify-between border border-brand-charcoal/10 shadow-sm hover:shadow-xl hover:border-brand-nero/30 transition-all duration-300">
+                    <div className="flex min-h-[34rem] flex-col justify-between rounded-3xl border border-brand-charcoal/10 bg-white p-6 shadow-sm transition-all duration-300 hover:border-brand-nero/30 hover:shadow-xl md:p-7">
                         <div>
                             <span className="inline-flex items-center gap-1 bg-brand-nero/10 text-brand-nero text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
                                 Build Legacy

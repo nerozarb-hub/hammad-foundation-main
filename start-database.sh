@@ -1,3 +1,5 @@
-#!/bin/bash
-docker run --name hammad-legacy-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=verceldb -p 5432:5432 -d postgres:alpine
-echo "Postgres started on port 5432"
+#!/bin/sh
+# Production payments require the authorized managed database. Never start a
+# disposable Docker database or generate hardcoded production credentials.
+printf '%s\n' 'Managed database provisioning is handled by the operator. Local PostgreSQL tests run with npm test; no managed account is needed for tests.'
+exit 1

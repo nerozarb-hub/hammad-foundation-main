@@ -2,23 +2,23 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, HeartHandshake, ShieldCheck } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-brand-charcoal/10 bg-white/95 backdrop-blur-md">
-            <div className="container flex h-16 items-center justify-between">
+        <header className="sticky top-0 z-50 w-full border-b border-brand-charcoal/10 bg-white shadow-sm">
+            <div className="container flex w-full min-h-16 max-w-[1280px] items-center justify-between gap-4 py-2 pr-8 lg:pr-16">
                 {/* Brand */}
-                <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                <Link href="/" className="flex min-w-0 items-center gap-2 hover:opacity-90 transition-opacity">
                     <span className="text-xl font-[900] tracking-tight text-brand-charcoal">
                         HAMMAD <span className="text-brand-nero">FOUNDATION</span>
                     </span>
                 </Link>
 
                 {/* Desktop Nav */}
-                <nav className="hidden lg:flex gap-7 items-center text-xs font-black uppercase tracking-[0.15em] text-brand-charcoal/65">
+                <nav className="hidden 2xl:flex gap-5 items-center text-xs font-black uppercase tracking-[0.12em] text-brand-charcoal/65">
                     <Link href="/our-school" className="hover:text-brand-nero transition-colors">
                         Our School
                     </Link>
@@ -43,8 +43,8 @@ export function Header() {
                 </nav>
 
                 {/* Status & CTA */}
-                <div className="flex items-center gap-4">
-                    <div className="hidden sm:flex flex-col items-end">
+                <div className="ml-auto flex shrink-0 items-center gap-3 lg:gap-4">
+                    <div className="hidden 2xl:flex flex-col items-end">
                         <p className="text-[10px] font-black text-brand-charcoal/40 uppercase tracking-widest">
                             Lahore, PK &bull; Barki Rd
                         </p>
@@ -55,16 +55,18 @@ export function Header() {
 
                     <Link
                         href="/#donate"
-                        className="hidden sm:inline-flex items-center justify-center btn-brand h-10 px-5 text-xs font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg"
+                        className="hidden 2xl:inline-flex items-center justify-center btn-brand h-10 px-5 text-xs font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg"
                     >
                         BECOME A GUARDIAN
                     </Link>
 
                     <button
                         type="button"
-                        className="lg:hidden text-brand-charcoal p-2 rounded-lg hover:bg-brand-gray-50 transition-colors"
+                        className="2xl:hidden text-brand-charcoal p-2 rounded-lg hover:bg-brand-gray-50 transition-colors"
                         onClick={() => setMobileOpen(!mobileOpen)}
                         aria-label="Toggle navigation"
+                        aria-expanded={mobileOpen}
+                        aria-controls="hammad-mobile-nav"
                     >
                         {mobileOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
@@ -73,7 +75,7 @@ export function Header() {
 
             {/* Mobile Drawer */}
             {mobileOpen && (
-                <div className="lg:hidden bg-white border-t border-brand-charcoal/10 p-5 shadow-xl">
+                <div id="hammad-mobile-nav" className="2xl:hidden bg-white border-t border-brand-charcoal/10 p-5 shadow-xl">
                     <div className="flex flex-col gap-2">
                         <Link
                             href="/our-school"

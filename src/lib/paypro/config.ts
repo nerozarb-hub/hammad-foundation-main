@@ -1,3 +1,5 @@
+import 'server-only';
+
 export interface PayProConfig {
   baseUrl: string;
   clientId: string;
@@ -5,60 +7,40 @@ export interface PayProConfig {
   merchantId: string;
   callbackUsername: string;
   callbackPassword: string;
-  environment: "production" | "sandbox" | "demo";
+  environment: 'production' | 'sandbox' | 'demo';
   appUrl: string;
   isConfigured: boolean;
+  liveRequestsEnabled: boolean;
 }
 
-export const DEMO_PAYPRO_BASE_URL = "https://demoapi.paypro.com.pk";
+export const DEMO_PAYPRO_BASE_URL = 'https://demoapi.paypro.com.pk';
+export const PRODUCTION_PAYPRO_BASE_URL = 'https://api.paypro.com.pk';
 
-export function getPayProConfig(envOverrides?: Record<string, string | undefined>): PayProConfig {
-  const envSource = envOverrides || process.env;
-
-  const rawEnv = envSource.PAYPRO_ENV?.trim().toLowerCase();
-  const environment: "production" | "sandbox" | "demo" =
-    rawEnv === "production" ? "production" : rawEnv === "demo" ? "demo" : "sandbox";
-
-  const rawBaseUrl = envSource.PAYPRO_BASE_URL?.trim();
-
-  // In production, PAYPRO_BASE_URL must be explicitly supplied. We NEVER infer or hardcode a production URL.
-  // In sandbox/demo, default explicitly to the confirmed official demo endpoint: https://demoapi.paypro.com.pk
-  let baseUrl = "";
-  if (environment === "production") {
-    baseUrl = rawBaseUrl ? rawBaseUrl.replace(/\/$/, "") : "";
-  } else {
-    baseUrl = (rawBaseUrl || DEMO_PAYPRO_BASE_URL).replace(/\/$/, "");
+export function getPayProConfig(overrides?: Record<string, string | undefined>): PayProConfig {
+  const env = overrides ?? process.env;
+  const rawEnv = env.PAYPRO_ENV?.trim().toLowerCase();
+  if (env.NODE_ENV === 'production' && !rawEnv) throw new Error('Explicit payment environment required');
+  if (rawEnv && !['production', 'sandbox', 'demo'].includes(rawEnv)) throw new Error('Invalid payment environment');
+  const environment = (rawEnv || 'sandbox') as PayProConfig['environment'];
+  const baseUrl = (env.PAYPRO_BASE_URL?.trim() || (environment === 'production' ? '' : DEMO_PAYPRO_BASE_URL)).replace(/\/$/, '');
+  if (baseUrl && baseUrl !== (environment === 'production' ? PRODUCTION_PAYPRO_BASE_URL : DEMO_PAYPRO_BASE_URL)) {
+    throw new Error('Payment host does not match environment');
   }
-
-  const clientId = envSource.PAYPRO_CLIENT_ID?.trim() || "";
-  const clientSecret = envSource.PAYPRO_CLIENT_SECRET?.trim() || "";
-  const merchantId = envSource.PAYPRO_MERCHANT_ID?.trim() || "";
-  const callbackUsername = envSource.PAYPRO_CALLBACK_USERNAME?.trim() || "";
-  const callbackPassword = envSource.PAYPRO_CALLBACK_PASSWORD?.trim() || "";
-
-  const appUrl = (
-    envSource.NEXT_PUBLIC_APP_URL ||
-    envSource.APP_URL ||
-    envSource.NEXT_PUBLIC_HAMMAD_SITE_URL ||
-    "https://hammad.yzeducationalservices.com"
-  ).replace(/\/$/, "");
-
-  // In production, isConfigured strictly requires baseUrl + credentials
-  // In sandbox/demo, credentials are required for live sandbox calls
-  const isConfigured = environment === "production"
-    ? Boolean(baseUrl && clientId && clientSecret && merchantId)
-    : Boolean(clientId && clientSecret && merchantId);
-
-  return {
-    baseUrl,
-    clientId,
-    clientSecret,
-    merchantId,
-    callbackUsername,
-    callbackPassword,
-    environment,
-    appUrl,
-    isConfigured,
+  const appUrl = (env.APP_URL || env.NEXT_PUBLIC_APP_URL || env.NEXT_PUBLIC_HAMMAD_SITE_URL || 'https://hammad.yzeducationalservices.com').replace(/\/$/, '');
+  const app = new URL(appUrl);
+  if (environment === 'production' && (app.protocol !== 'https:' || app.username || app.password)) throw new Error('HTTPS application URL required');
+  const clientId = env.PAYPRO_CLIENT_ID?.trim() || '';
+  const clientSecret = env.PAYPRO_CLIENT_SECRET?.trim() || '';
+  const merchantId = env.PAYPRO_MERCHANT_ID?.trim() || '';
+  const callbackUsername = env.PAYPRO_CALLBACK_USERNAME?.trim() || '';
+  const callbackPassword = env.PAYPRO_CALLBACK_PASSWORD?.trim() || '';
+  return { baseUrl, environment, appUrl, clientId, clientSecret, merchantId, callbackUsername, callbackPassword,
+    isConfigured: Boolean(baseUrl && clientId && clientSecret && merchantId && callbackUsername && callbackPassword),
+    liveRequestsEnabled: env.PAYPRO_LIVE_REQUESTS_ENABLED === 'true' && (!env.VERCEL_ENV || env.VERCEL_ENV === 'production'),
   };
 }
 
+export function assertGatewayEnabled(config: PayProConfig): void {
+  if (!config.isConfigured) throw new Error('Payment configuration incomplete');
+  if (config.environment === 'production' && !config.liveRequestsEnabled) throw new Error('Live payment requests are disabled');
+}

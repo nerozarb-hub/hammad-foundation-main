@@ -1,3 +1,5 @@
+import 'server-only';
+import { getSupportOption } from '../../config/ecosystem.ts';
 import crypto from "node:crypto";
 
 /**
@@ -6,7 +8,7 @@ import crypto from "node:crypto";
  */
 export function generateOrderNumber(prefix = "HF"): string {
   const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const randomPart = crypto.randomBytes(4).toString("hex").toUpperCase();
+  const randomPart = crypto.randomBytes(16).toString("hex").toUpperCase();
   return `${prefix}-${datePart}-${randomPart}`;
 }
 
@@ -35,7 +37,7 @@ export interface ValidationResult {
 export function validateDonationInput(raw: unknown): ValidationResult {
   const errors: Record<string, string> = {};
 
-  if (!raw || typeof raw !== "object") {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     return { valid: false, errors: { form: "Invalid request payload" } };
   }
 
@@ -43,7 +45,7 @@ export function validateDonationInput(raw: unknown): ValidationResult {
 
   // 1. Validate Amount
   const rawAmount = Number(payload.amount);
-  if (isNaN(rawAmount) || !Number.isFinite(rawAmount)) {
+  if ((typeof payload.amount !== "number" && typeof payload.amount !== "string") || !/^\d{1,10}(\.\d{1,2})?$/.test(String(payload.amount)) || isNaN(rawAmount) || !Number.isFinite(rawAmount)) {
     errors.amount = "Donation amount must be a valid number";
   } else if (rawAmount < 100) {
     errors.amount = "Minimum donation amount is PKR 100";
@@ -84,6 +86,11 @@ export function validateDonationInput(raw: unknown): ValidationResult {
   const supportOptionId = typeof payload.supportOptionId === "string" && payload.supportOptionId.trim()
     ? payload.supportOptionId.trim().slice(0, 50)
     : "custom";
+
+  const support = getSupportOption(supportOptionId);
+  if (supportOptionId !== 'custom' && !support) errors.supportOptionId = 'Unknown support option';
+  if (support && rawAmount !== support.amountPkr) errors.amount = 'Amount does not match the selected support option';
+  if (rawName.replace(/[<>]/g, "").length < 2 || /[\u0000-\u001f\u007f]/.test(rawName)) errors.donorName = 'Invalid name';
 
   if (Object.keys(errors).length > 0) {
     return { valid: false, errors };
@@ -128,101 +135,10 @@ export function timingSafeCompare(a: string | undefined | null, b: string | unde
  * Validates that a Click2Pay redirect URL belongs exclusively
  * to PayPro's legitimate domain or the configured base URL origin.
  */
-export function isValidPayProDomain(urlStr: string, configuredBaseUrl?: string): boolean {
+export function isValidPayProDomain(urlStr: string): boolean {
   try {
-    const parsed = new URL(urlStr);
-    if (parsed.protocol !== "https:") {
-      return false;
-    }
-
-    const host = parsed.hostname.toLowerCase();
-    if (host === "paypro.com.pk" || host.endsWith(".paypro.com.pk")) {
-      return true;
-    }
-
-    if (configuredBaseUrl) {
-      try {
-        const baseHost = new URL(configuredBaseUrl).hostname.toLowerCase();
-        if (host === baseHost || host.endsWith(`.${baseHost}`)) {
-          return true;
-        }
-      } catch {
-        // ignore invalid base url
-      }
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
+    const url = new URL(urlStr);
+    return url.protocol === 'https:' && !url.username && !url.password && !url.port &&
+      (url.hostname === 'paypro.com.pk' || url.hostname.endsWith('.paypro.com.pk'));
+  } catch { return false; }
 }
-
-export interface RateLimitResult {
-  allowed: boolean;
-  remaining: number;
-  resetInSeconds: number;
-}
-
-/**
- * Interface for production rate limiting.
- *
- * NOTE: The in-memory limiter is designed for local development and unit tests.
- * In a multi-region or serverless production deployment, an external shared KV/Redis
- * rate limiter adapter should implement this interface.
- */
-export interface IRateLimiter {
-  check(identifier: string, limit?: number, windowSeconds?: number): Promise<RateLimitResult> | RateLimitResult;
-}
-
-interface RateLimitBucket {
-  count: number;
-  resetAt: number;
-}
-
-export class MemoryRateLimiter implements IRateLimiter {
-  private store = new Map<string, RateLimitBucket>();
-
-  check(identifier: string, limit: number = 10, windowSeconds: number = 60): RateLimitResult {
-    const now = Date.now();
-    const bucket = this.store.get(identifier);
-
-    // Clean old entries periodically
-    if (this.store.size > 5000) {
-      for (const [key, val] of this.store.entries()) {
-        if (val.resetAt < now) {
-          this.store.delete(key);
-        }
-      }
-    }
-
-    if (!bucket || bucket.resetAt < now) {
-      const resetAt = now + windowSeconds * 1000;
-      this.store.set(identifier, { count: 1, resetAt });
-      return { allowed: true, remaining: limit - 1, resetInSeconds: windowSeconds };
-    }
-
-    if (bucket.count >= limit) {
-      const resetInSeconds = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
-      return { allowed: false, remaining: 0, resetInSeconds };
-    }
-
-    bucket.count += 1;
-    const resetInSeconds = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
-    return { allowed: true, remaining: limit - bucket.count, resetInSeconds };
-  }
-
-  clear(): void {
-    this.store.clear();
-  }
-}
-
-const defaultRateLimiter = new MemoryRateLimiter();
-
-export function checkRateLimit(
-  identifier: string,
-  limit: number = 10,
-  windowSeconds: number = 60
-): RateLimitResult {
-  return defaultRateLimiter.check(identifier, limit, windowSeconds);
-}
-

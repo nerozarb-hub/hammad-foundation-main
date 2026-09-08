@@ -75,16 +75,23 @@ export function PaymentModal({ isOpen, onClose, supportId }: PaymentModalProps) 
     setErrorMessage("");
 
     try {
+      const payload = {
+        amount: effectiveAmount, donorName: donorName.trim(),
+        donorEmail: donorEmail.trim() || undefined, donorPhone: donorPhone.trim() || undefined,
+        supportOptionId: selectedId,
+      };
+      const fingerprint = JSON.stringify(payload);
+      const saved = sessionStorage.getItem('hammad-checkout');
+      let checkout: { fingerprint: string; key: string } | null = null;
+      try { checkout = saved ? JSON.parse(saved) : null; } catch { /* replace malformed local state */ }
+      if (!checkout || checkout.fingerprint !== fingerprint) {
+        checkout = { fingerprint, key: crypto.randomUUID() };
+        sessionStorage.setItem('hammad-checkout', JSON.stringify(checkout));
+      }
       const res = await fetch("/api/paypro/create-order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: effectiveAmount,
-          donorName: donorName.trim(),
-          donorEmail: donorEmail.trim() || undefined,
-          donorPhone: donorPhone.trim() || undefined,
-          supportOptionId: selectedId,
-        }),
+        headers: { "Content-Type": "application/json", "Idempotency-Key": checkout.key },
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json().catch(() => null);

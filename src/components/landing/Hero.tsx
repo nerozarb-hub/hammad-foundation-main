@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { CheckCircle2, ArrowRight, ShieldAlert, Sparkles, FileText } from "lucide-react";
+import { CheckCircle2, ShieldAlert, Sparkles } from "lucide-react";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
 
 interface HeroProps {
@@ -14,9 +12,9 @@ export function Hero({ onSelectPlan }: HeroProps) {
 
     return (
         <section className="relative pt-12 pb-20 md:py-24 bg-white shadow-sm overflow-hidden">
-            <div className="container relative z-10 flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+            <div className="container relative z-10 flex w-full flex-col gap-12 xl:flex-row xl:gap-16 items-center">
                 {/* Left copy column */}
-                <div className="flex-[1.15] text-left">
+                <div className="min-w-0 flex-[1.15] text-left">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-nero/10 border border-brand-nero/20 text-brand-nero text-xs font-black uppercase tracking-wider mb-6">
                         <Sparkles size={14} className="animate-pulse" />
                         1-to-1 Direct Student Sponsorship
@@ -63,7 +61,7 @@ export function Hero({ onSelectPlan }: HeroProps) {
                     </div>
 
                     {/* CTAs */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                         <button
                             type="button"
                             onClick={() => {
@@ -74,30 +72,38 @@ export function Hero({ onSelectPlan }: HeroProps) {
                                     element?.scrollIntoView({ behavior: "smooth" });
                                 }
                             }}
-                            className="btn-brand h-16 text-base md:text-lg px-8 sm:px-10 flex flex-col items-center justify-center leading-tight shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] hover:shadow-[0_6px_20px_0_rgba(15,157,88,0.45)]"
+                            className="btn-brand min-h-16 h-auto w-full sm:w-auto sm:min-w-[18rem] max-w-full px-6 sm:px-8 py-3 text-base md:text-lg flex flex-col items-center justify-center leading-tight text-center shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] hover:shadow-[0_6px_20px_0_rgba(15,157,88,0.45)]"
                         >
-                            <span className="font-black">BECOME A GUARDIAN &rarr; $30/MONTH</span>
-                            <span className="text-[11px] opacity-80 font-semibold mt-0.5">(First video update in 48 hours)</span>
+                            <span className="font-black leading-tight">BECOME A GUARDIAN &rarr; $30/MONTH</span>
+                            <span className="mt-1 text-[11px] leading-snug opacity-80 font-semibold">First video update in 48 hours</span>
                         </button>
 
                         <a
                             href="#proof"
-                            className="h-16 flex items-center justify-center border-2 border-brand-charcoal rounded-xl text-brand-charcoal hover:bg-brand-charcoal hover:text-white text-sm md:text-base font-black transition-all px-8 text-center"
+                            className="min-h-16 h-auto w-full sm:w-auto sm:min-w-[13rem] max-w-full px-6 py-3 flex items-center justify-center border-2 border-brand-charcoal rounded-xl text-brand-charcoal hover:bg-brand-charcoal hover:text-white text-sm md:text-base font-black leading-tight transition-all text-center"
                         >
-                            I&apos;m Skeptical &rarr; Show Me Receipts
+                            <span className="hidden sm:inline">I&apos;m Skeptical &rarr; Show Me Receipts</span>
+                            <span className="sm:hidden">Show Me Receipts</span>
                         </a>
                     </div>
                 </div>
 
                 {/* Right Image & Impact Meter Card */}
-                <div className="flex-1 w-full max-w-md lg:max-w-lg relative">
+                <div className="relative min-w-0 w-full max-w-md flex-1 lg:max-w-lg">
                     <div className="aspect-[4/5] bg-brand-charcoal relative overflow-hidden rounded-3xl shadow-2xl border border-brand-charcoal/10">
-                        <img
-                            src="https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&q=80&w=800"
-                            alt="Hammad Foundation Classroom in Lahore"
-                            className="w-full h-full object-cover opacity-90"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-charcoal via-brand-charcoal/30 to-transparent"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(15,157,88,0.42),transparent_34%),linear-gradient(145deg,#15221b_0%,#0c0f13_72%)]" />
+                        <div className="absolute inset-0 flex flex-col justify-between p-7 pb-48 md:p-9 md:pb-52 text-white">
+                            <div className="flex items-start justify-between gap-4">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">Hammad Foundation School</span>
+                                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white/70">Lahore</span>
+                            </div>
+                            <div className="max-w-[15rem]">
+                                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-brand-nero">Your student. Your proof.</p>
+                                <p className="text-3xl font-black leading-[1.05] tracking-tight md:text-4xl">A direct line from your phone to a classroom.</p>
+                                <div className="mt-7 h-px w-16 bg-brand-nero" />
+                                <p className="mt-4 text-sm leading-relaxed text-white/65">Tuition, lunch, school supplies, and weekly updates—one clear monthly commitment.</p>
+                            </div>
+                        </div>
 
                         {/* Overlay Card */}
                         <div className="absolute bottom-4 left-4 right-4 bg-brand-charcoal/95 backdrop-blur-md text-white rounded-2xl p-6 border border-white/10 shadow-xl">
@@ -122,10 +128,10 @@ export function Hero({ onSelectPlan }: HeroProps) {
                             <div className="space-y-1 bg-white/5 p-3 rounded-xl border border-white/10">
                                 <p className="text-xs font-[900] text-amber-400 flex items-center gap-1.5">
                                     <ShieldAlert size={14} />
-                                    53 spots left for 2025-2026 school year
+                                    53 sponsorship places remain
                                 </p>
                                 <p className="text-[11px] text-white/70 font-medium">
-                                    After June, these children wait another full year—or drop out.
+                                    Every place keeps one student in school this year.
                                 </p>
                             </div>
                         </div>

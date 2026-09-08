@@ -8,9 +8,9 @@ export function UrgencyBar() {
             <div className="container flex items-center justify-center gap-3 text-center px-4">
                 <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0" />
                 <p className="text-xs sm:text-sm font-[800] text-brand-charcoal tracking-tight">
-                    53 SPOTS LEFT for 2025-2026 school year.{" "}
+                    53 SPONSORSHIP PLACES REMAIN.{" "}
                     <span className="font-medium opacity-80 hidden sm:inline">
-                        After that, these kids wait another year—or drop out permanently.
+                        Each place covers tuition, lunch, and school supplies for one student.
                     </span>
                 </p>
             </div>

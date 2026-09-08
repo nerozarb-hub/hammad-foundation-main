@@ -15,7 +15,6 @@ import { FAQ } from "@/components/landing/FAQ";
 import { ContactSection } from "@/components/landing/ContactSection";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { FloatingTrustBadge } from "@/components/ui/FloatingTrustBadge";
-import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 
 export default function Home() {
   return (
@@ -37,7 +36,6 @@ export default function Home() {
       <ContactSection />
       <FinalCTA />
       <FloatingTrustBadge />
-      <FloatingWhatsApp />
     </div>
   );
 }

@@ -1,49 +1,23 @@
-# Deployment Guide for Hammad Foundation
+# Hammad payment deployment
 
-This project is built with Next.js 16 and is optimized for deployment on Vercel.
+The payment integration is deliberately locked against live gateway requests. Do not enable it or create a real invoice until the owner explicitly approves a controlled live test after all readiness checks pass.
 
-## 1. Prerequisites
+The operator handles managed database creation, migration, connection secrets and deployment. The owner is only asked to authorize the required account connection, and any paid plan separately.
 
-Before deploying, ensure you have:
-- A [Vercel Account](https://vercel.com/signup)
-- A GitHub repository with this code pushed
+See [PayPro production readiness](docs/paypro-production-readiness.md) for the current evidence, remaining provider documentation, managed database setup and live-test release gate.
 
-## 2. Environment Variables
+Local checks:
 
-The application requires a PostgreSQL database (via Vercel Postgres). You must set the following environment variable in your Vercel project settings:
+- `npm run check`: lint, typecheck, network-blocked tests and production build.
+- `npm run payments:smoke`: local built-app HTTP checks with all outbound server networking blocked.
+- `npm run payments:safety`: configured-secret scan and live-request lock check.
+- `npm run db:check`: read-only managed database readiness; fails until provisioned.
 
-- `POSTGRES_URL`: The connection string for your database.
+Database operator commands, after account authorization:
 
-If you are using Vercel Postgres, this variable is automatically added when you connect the storage to your project.
+- `npm run db:migrate`: apply the versioned schema with a private migration connection.
+- `npm run db:provision-role`: create a restricted runtime role and save the runtime connection privately.
 
-## 3. Deploying to Vercel
+Use `DATABASE_URL` for the restricted runtime connection, `DATABASE_MIGRATION_URL` only for administrative setup, and `APP_URL` for the exact HTTPS site origin. `PAYPRO_ENV=production`, `PAYPRO_BASE_URL=https://api.paypro.com.pk`, and `PAYPRO_LIVE_REQUESTS_ENABLED=false` remain required during preparation. PayPro credentials, callback credentials and database connection strings must never use a `NEXT_PUBLIC_` prefix.
 
-1.  **Push to GitHub**: ensure your code is committed and pushed.
-2.  **Import Project**:
-    - Go to your Vercel Dashboard.
-    - Click "Add New..." -> "Project".
-    - Import the repository.
-3.  **Configure Project**:
-    - Framework Preset: Next.js (should be auto-detected).
-    - Root Directory: `./` (default).
-4.  **Add Database**:
-    - In the project dashboard, go to the "Storage" tab.
-    - Click "Create Database" -> "Postgres".
-    - Follow the prompts to create a new database.
-    - Once created, Vercel will automatically add the required environment variables (like `POSTGRES_URL`, `POSTGRES_PRISMA_URL`, etc.) to your project.
-5.  **Deploy**:
-    - Click "Deploy".
-    - Vercel will build and deploy your site.
-
-## 4. Database Schema
-
-After deployment, you may need to push your database schema. You can do this by running the migration command locally (connected to the remote DB) or adding a build step, but for Vercel Postgres with Drizzle, the recommended way is:
-
-1.  Get your database credentials from Vercel.
-2.  Add them to your local `.env` file.
-3.  Run `npx drizzle-kit push` to push the schema changes to the database.
-
-## 5. Troubleshooting
-
-- **Build Errors**: Check the build logs in Vercel. Ensure all dependencies are installed.
-- **Database Connection**: Verify `POSTGRES_URL` is set correctly in the Environment Variables section.
+The production build uses the documented `next build --webpack` option. The Inter font is included locally, so no Google Fonts download is required during a build. No database migration or gateway request occurs during build.
