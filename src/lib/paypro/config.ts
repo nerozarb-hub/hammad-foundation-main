@@ -22,7 +22,7 @@ export function getPayProConfig(overrides?: Record<string, string | undefined>):
   if (env.NODE_ENV === 'production' && !rawEnv) throw new Error('Explicit payment environment required');
   if (rawEnv && !['production', 'sandbox', 'demo'].includes(rawEnv)) throw new Error('Invalid payment environment');
   const environment = (rawEnv || 'sandbox') as PayProConfig['environment'];
-  const baseUrl = (env.PAYPRO_BASE_URL?.trim() || (environment === 'production' ? '' : DEMO_PAYPRO_BASE_URL)).replace(/\/$/, '');
+  const baseUrl = (env.PAYPRO_BASE_URL?.trim() || (environment === 'production' ? '' : DEMO_PAYPRO_BASE_URL)).replace(/\/+$/, '');
   if (baseUrl && baseUrl !== (environment === 'production' ? PRODUCTION_PAYPRO_BASE_URL : DEMO_PAYPRO_BASE_URL)) {
     throw new Error('Payment host does not match environment');
   }

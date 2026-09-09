@@ -5,7 +5,7 @@ import { PayProClient } from '../src/lib/paypro/client.ts';
 import { isValidPayProDomain, validateDonationInput } from '../src/lib/paypro/security.ts';
 import { poolOptions, getPaymentPool } from '../src/lib/db/pool.ts';
 
-export const fixtureConfig = () => getPayProConfig({ PAYPRO_ENV: 'production', PAYPRO_BASE_URL: 'https://api.paypro.com.pk',
+export const fixtureConfig = (baseUrl = 'https://api.paypro.com.pk') => getPayProConfig({ PAYPRO_ENV: 'production', PAYPRO_BASE_URL: baseUrl,
   PAYPRO_CLIENT_ID: 'fixture', PAYPRO_CLIENT_SECRET: 'fixture', PAYPRO_MERCHANT_ID: 'fixture',
   PAYPRO_CALLBACK_USERNAME: 'fixture', PAYPRO_CALLBACK_PASSWORD: 'fixture', PAYPRO_LIVE_REQUESTS_ENABLED: 'true' });
 
@@ -32,7 +32,9 @@ test('auth, Create Order, and GGOS use the configured host and documented GET bo
     if (req.url.endsWith('/co')) return { status: 200, headers: new Headers(), body: JSON.stringify({ Status: '00', PayProId: '123', Click2Pay: 'https://api.paypro.com.pk/checkout' }) };
     return { status: 200, headers: new Headers(), body: JSON.stringify({ OrderStatus: 'PAID', PayProId: '123', PaidAmount: '100.00' }) };
   };
-  const client = new PayProClient(fixtureConfig(), transport);
+  const config = fixtureConfig('https://api.paypro.com.pk///');
+  assert.equal(config.baseUrl, 'https://api.paypro.com.pk');
+  const client = new PayProClient(config, transport);
   const order = await client.createOrder({ orderNumber: 'fixture-order', amount: 100, donorName: 'Test Donor' });
   assert.equal(order.payProId, '123');
   const result = await client.getOrderStatus('123');
