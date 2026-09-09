@@ -3,13 +3,17 @@ import { getPayProConfig, type PayProConfig } from './config.ts';
 import { isValidPayProDomain } from './security.ts';
 import { nodePayProTransport, sendPayProRequest, type PayProTransportFn } from './transport.ts';
 
-function item(body: string): Record<string, unknown> {
+function responsePair(body: string): { status: string; data: Record<string, unknown> } {
   let parsed: unknown;
   try { parsed = JSON.parse(body); } catch { throw new Error('Malformed gateway response'); }
-  // Multiple records are ambiguous, so do not choose the first arbitrarily.
-  if (Array.isArray(parsed)) { if (parsed.length !== 1) throw new Error('Ambiguous gateway response'); parsed = parsed[0]; }
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Malformed gateway response');
-  return parsed as Record<string, unknown>;
+  // PayPro V2 returns a two-object array: API status first, result data second.
+  if (!Array.isArray(parsed) || parsed.length !== 2) throw new Error('Malformed gateway response');
+  const [metadata, data] = parsed;
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata) ||
+      !data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Malformed gateway response');
+  const status = String((metadata as Record<string, unknown>).Status ?? '');
+  if (status !== '00') throw new Error('Gateway operation not confirmed');
+  return { status, data: data as Record<string, unknown> };
 }
 function identifier(value: unknown): string {
   if (typeof value === 'number' && !Number.isSafeInteger(value)) throw new Error('Invalid gateway identifier');
@@ -26,6 +30,12 @@ export function moneyMinor(value: unknown): number {
   const result = Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
   if (!Number.isSafeInteger(result)) throw new Error('Invalid payment amount');
   return result;
+}
+
+function payProDate(date: Date): string {
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  return `${day}/${month}/${date.getUTCFullYear()}`;
 }
 
 export class PayProClient {
@@ -46,30 +56,35 @@ export class PayProClient {
     const token = await this.authenticate();
     const now = new Date();
     const payload = [{ MerchantId: this.config.merchantId }, {
-      MerchantId: this.config.merchantId, OrderNumber: params.orderNumber,
+      OrderNumber: params.orderNumber,
       OrderAmount: (moneyMinor(params.amount) / 100).toFixed(2),
-      OrderDueDate: new Date(now.getTime() + 14 * 86400_000).toISOString().slice(0, 10),
-      OrderType: 'Service', IssueDate: now.toISOString().slice(0, 10),
+      OrderDueDate: payProDate(new Date(now.getTime() + 14 * 86400_000)),
+      OrderType: 'Service', IssueDate: payProDate(now),
       OrderExpireAfterSeconds: String(params.expireAfterSeconds ?? 86400),
       CustomerName: params.donorName, CustomerMobile: params.donorPhone || '', CustomerEmail: params.donorEmail || '', CustomerAddress: '',
     }];
-    const data = item((await sendPayProRequest(this.config, '/v2/ppro/co', 'POST', token, payload, this.transport)).body);
-    if (!['00', '0', 'Success'].includes(String(data.Status))) throw new Error('Order creation not confirmed');
+    const { status, data } = responsePair((await sendPayProRequest(this.config, '/v2/ppro/co', 'POST', token, payload, this.transport)).body);
     const payProId = identifier(data.PayProId);
     if (!payProId || (data.OrderNumber !== undefined && data.OrderNumber !== params.orderNumber)) throw new Error('Order identity mismatch');
-    const click2PayUrl = typeof data.Click2Pay === 'string' ? data.Click2Pay : '';
-    if (!isValidPayProDomain(click2PayUrl)) throw new Error('Untrusted payment URL');
-    const billUrl = typeof data.BillUrl === 'string' ? data.BillUrl : undefined;
-    if (billUrl && !isValidPayProDomain(billUrl)) throw new Error('Untrusted bill URL');
-    return { payProId, orderNumber: params.orderNumber, click2PayUrl, billUrl, status: String(data.Status), description: '' };
+    const rawClick2PayUrl = typeof data.Click2Pay === 'string' ? data.Click2Pay : '';
+    if (!isValidPayProDomain(rawClick2PayUrl)) throw new Error('Untrusted payment URL');
+    const checkout = new URL(rawClick2PayUrl);
+    checkout.searchParams.set('callback_url', new URL('/donation/return', this.config.appUrl).toString());
+    const click2PayUrl = checkout.toString();
+    const rawBillUrl = typeof data.BillUrl === 'string' ? data.BillUrl : undefined;
+    // BillUrl is optional and older PayPro examples use a non-standard cpay.pk
+    // endpoint. Never expose it unless it passes the same strict redirect policy.
+    const billUrl = rawBillUrl && isValidPayProDomain(rawBillUrl) ? rawBillUrl : undefined;
+    return { payProId, orderNumber: params.orderNumber, click2PayUrl, billUrl, status, description: typeof data.Description === 'string' ? data.Description : '' };
   }
-  async getOrderStatus(payProId: string) {
+  async getOrderStatus(payProId: string, expectedOrderNumber: string) {
     if (!identifier(payProId)) throw new Error('PayProID is required');
+    if (!identifier(expectedOrderNumber)) throw new Error('Order number is required');
     const token = await this.authenticate();
-    const data = item((await sendPayProRequest(this.config, '/v2/ppro/ggos', 'GET', token,
+    const { data } = responsePair((await sendPayProRequest(this.config, '/v2/ppro/ggos', 'GET', token,
       { userName: this.config.merchantId, cpayId: payProId }, this.transport)).body);
-    const returnedId = identifier(data.PayProId ?? data.cpayId);
-    if (!returnedId || returnedId !== payProId || (data.cpayId !== undefined && identifier(data.cpayId) !== payProId)) throw new Error('Gateway identity mismatch');
+    const returnedOrderNumber = identifier(data.OrderNumber);
+    if (!returnedOrderNumber || returnedOrderNumber !== expectedOrderNumber) throw new Error('Gateway identity mismatch');
     // Status is an API result code, not evidence of settlement. Only explicit
     // OrderStatus=PAID plus matching identity and amount can settle a donation.
     const rawStatus = String(data.OrderStatus ?? '').toUpperCase();
@@ -79,8 +94,8 @@ export class PayProClient {
     else if (rawStatus === 'FAILED') status = 'failed';
     else if (rawStatus === 'EXPIRED') status = 'expired';
     else throw new Error('Unrecognized gateway payment status');
-    const paidAmount = data.PaidAmount === undefined ? undefined : moneyMinor(data.PaidAmount) / 100;
+    const paidAmount = data.OrderAmountPaid === undefined ? undefined : moneyMinor(data.OrderAmountPaid) / 100;
     if (status === 'paid' && paidAmount === undefined) throw new Error('Gateway paid amount missing');
-    return { status, isPaid: status === 'paid', payProId: returnedId, rawStatus, paidAmount, description: '' };
+    return { status, isPaid: status === 'paid', payProId, orderNumber: returnedOrderNumber, rawStatus, paidAmount, description: '' };
   }
 }

@@ -15,8 +15,8 @@ async function verifyRecord(repo: IDonationRepository, gateway: ReturnType<Depen
   // Paid records can only be written by validated server verification. Replays
   // return the durable result without calling the gateway again.
   if (record.status === 'paid') return record;
-  const result = await gateway.getOrderStatus(record.payProId);
-  if (result.payProId !== record.payProId) throw new Error('Payment identity mismatch');
+  const result = await gateway.getOrderStatus(record.payProId, record.orderNumber);
+  if (result.payProId !== record.payProId || result.orderNumber !== record.orderNumber) throw new Error('Payment identity mismatch');
   if (result.status === 'paid' && (!result.isPaid || result.paidAmount === undefined || moneyMinor(result.paidAmount) !== moneyMinor(record.amount))) throw new Error('Payment amount mismatch');
   if (result.isPaid !== (result.status === 'paid')) throw new Error('Payment status mismatch');
   return repo.recordVerification(record.orderNumber, record.payProId, result.status, result.paidAmount);
@@ -79,11 +79,13 @@ export function createPaymentHandlers(deps: Dependencies = defaults) {
         const payProId = ids[0] as string | undefined;
         if (!orderNumber && !payProId) return json({ success: false, error: 'Payment identifier required.' }, 400);
         const repo = deps.repository();
-        if (!await repo.consumeRateLimit('verify', 120, 60)) return json({ success: false, error: 'Please try again shortly.' }, 429, { 'Retry-After': '60' });
         const record = orderNumber ? await repo.findByOrderNumber(orderNumber) : await repo.findByPayProId(payProId!);
         // Identifiers alone are never authorization to see donor information.
         if (!record || !timingSafeCompare(hash(cookieValue(req, record.orderNumber)), record.receiptTokenHash) || (payProId && payProId !== record.payProId)) return json({ success: false, error: 'Payment record unavailable for this session.' }, 404);
         if (record.status === 'paid' || !record.payProId) return json(receipt(record));
+        // Unknown identifiers and invalid receipt capabilities must not consume
+        // the scarce gateway-verification allowance shared by real donors.
+        if (!await repo.consumeRateLimit('verify', 120, 60)) return json({ success: false, error: 'Please try again shortly.' }, 429, { 'Retry-After': '60' });
         assertGatewayEnabled(config);
         return json(receipt(await verifyRecord(repo, deps.gateway(config), record)));
       } catch { console.error('[payments] verification_unavailable'); return json({ success: false, error: 'Payment verification is unavailable.' }, 503); }
@@ -93,6 +95,9 @@ export function createPaymentHandlers(deps: Dependencies = defaults) {
       try {
         const config = deps.config();
         if (!config.callbackUsername || !config.callbackPassword) return failure(503, '02', 'Callback unavailable.');
+        const repo = deps.repository();
+        // Bound online guessing before evaluating the static callback secret.
+        if (!await repo.consumeRateLimit('callback-auth', 60, 60)) return failure(429, '02', 'Please retry later.');
         let body;
         try { body = await readJson(req); } catch { return failure(400, '01', 'Invalid request.'); }
         const username = body.username ?? body.UserName ?? body.Username;
@@ -104,7 +109,6 @@ export function createPaymentHandlers(deps: Dependencies = defaults) {
         if (typeof raw !== 'string') return failure(400, '01', 'Invalid invoice list.');
         const orders = [...new Set(raw.split(',').map(v => v.trim()))];
         if (!orders.length || orders.length > 20 || orders.some(v => !validOrder(v))) return failure(400, '01', 'Invalid invoice list.');
-        const repo = deps.repository();
         if (!await repo.consumeRateLimit('callback', 120, 60)) return failure(429, '02', 'Please retry later.');
         const results = [];
         let transientFailure = false;

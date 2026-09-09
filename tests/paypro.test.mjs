@@ -29,30 +29,39 @@ test('auth, Create Order, and GGOS use the configured host and documented GET bo
   const transport = async req => {
     requests.push(req);
     if (req.url.endsWith('/auth')) return { status: 200, headers: new Headers({ token: 'fixture' }), body: '{}' };
-    if (req.url.endsWith('/co')) return { status: 200, headers: new Headers(), body: JSON.stringify({ Status: '00', PayProId: '123', Click2Pay: 'https://api.paypro.com.pk/checkout' }) };
-    return { status: 200, headers: new Headers(), body: JSON.stringify({ OrderStatus: 'PAID', PayProId: '123', PaidAmount: '100.00' }) };
+    if (req.url.endsWith('/co')) return { status: 200, headers: new Headers(), body: JSON.stringify([{ Status: '00' }, { OrderNumber: 'fixture-order', PayProId: '123', Click2Pay: 'https://marketplace.paypro.com.pk/checkout?bid=fixture' }]) };
+    return { status: 200, headers: new Headers(), body: JSON.stringify([{ Status: '00' }, { OrderStatus: 'PAID', OrderNumber: 'fixture-order', OrderAmountPaid: '100.00' }]) };
   };
   const config = fixtureConfig('https://api.paypro.com.pk///');
   assert.equal(config.baseUrl, 'https://api.paypro.com.pk');
   const client = new PayProClient(config, transport);
   const order = await client.createOrder({ orderNumber: 'fixture-order', amount: 100, donorName: 'Test Donor' });
   assert.equal(order.payProId, '123');
-  const result = await client.getOrderStatus('123');
+  const result = await client.getOrderStatus('123', 'fixture-order');
   assert.equal(result.isPaid, true);
   assert.deepEqual(requests.map(x => x.url), ['/auth','/co','/auth','/ggos'].map(p => `https://api.paypro.com.pk/v2/ppro${p}`));
   assert.equal(requests[3].method, 'GET');
   assert.deepEqual(JSON.parse(requests[3].body), { userName: 'fixture', cpayId: '123' });
   assert.equal(requests[3].headers.token, 'fixture');
+  assert.deepEqual(JSON.parse(requests[0].body), { clientid: 'fixture', clientsecret: 'fixture' });
+  const createPayload = JSON.parse(requests[1].body);
+  assert.deepEqual(createPayload[0], { MerchantId: 'fixture' });
+  assert.equal('MerchantId' in createPayload[1], false);
+  assert.match(createPayload[1].IssueDate, /^\d{2}\/\d{2}\/\d{4}$/);
+  assert.match(createPayload[1].OrderDueDate, /^\d{2}\/\d{2}\/\d{4}$/);
+  const checkout = new URL(order.click2PayUrl);
+  assert.equal(checkout.searchParams.get('callback_url'), 'https://hammad.yzeducationalservices.com/donation/return');
 });
 for (const response of [
-  { Status: '00', PayProId: '123', PaidAmount: 100 },
-  { OrderStatus: 'PAID', PayProId: 'different', PaidAmount: 100 },
-  { OrderStatus: 'PAID', PayProId: '123' },
-  { OrderStatus: 'PAID', PayProId: '123', PaidAmount: '1e2' },
-  { OrderStatus: 'PAID', PaidAmount: 100 },
+  [{ Status: '00' }, { OrderNumber: 'fixture-order', OrderAmountPaid: 100 }],
+  [{ Status: '00' }, { OrderStatus: 'PAID', OrderNumber: 'different', OrderAmountPaid: 100 }],
+  [{ Status: '00' }, { OrderStatus: 'PAID', OrderNumber: 'fixture-order' }],
+  [{ Status: '00' }, { OrderStatus: 'PAID', OrderNumber: 'fixture-order', OrderAmountPaid: '1e2' }],
+  [{ Status: '00' }, { OrderStatus: 'PAID', OrderAmountPaid: 100 }],
+  [{ Status: '01' }, { OrderStatus: 'PAID', OrderNumber: 'fixture-order', OrderAmountPaid: 100 }],
 ]) test(`GGOS rejects insufficient evidence ${JSON.stringify(response)}`, async () => {
   const client = new PayProClient(fixtureConfig(), async req => ({ status: 200, headers: new Headers({ token: 'fixture' }), body: JSON.stringify(req.url.endsWith('/auth') ? {} : response) }));
-  await assert.rejects(client.getOrderStatus('123'));
+  await assert.rejects(client.getOrderStatus('123', 'fixture-order'));
 });
 test('gateway errors and malformed responses fail closed without reflecting response bodies', async () => {
   for (const [status,body] of [[500,'sensitive upstream diagnostic'],[302,''],[200,'not JSON']]) {

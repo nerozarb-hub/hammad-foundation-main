@@ -21,7 +21,6 @@ export interface DonationRecord {
 }
 
 export interface PayProCreateOrderPayload {
-  MerchantId: string;
   OrderNumber: string;
   OrderAmount: string;
   OrderDueDate: string;
@@ -56,9 +55,10 @@ export interface PayProGgosResponseItem {
   OrderStatus?: string | number;
   Status?: string | number;
   Description?: string;
-  PayProId?: string | number;
-  cpayId?: string | number;
-  PaidAmount?: string | number;
+  OrderNumber?: string;
+  AmountPayable?: string | number;
+  OrderAmountPaid?: string | number;
+  DatePaid?: string;
 }
 
 export type PayProGgosResponse = PayProGgosResponseItem | PayProGgosResponseItem[];

@@ -13,7 +13,7 @@ import { PayProClient } from '../src/lib/paypro/client.ts';
 let db, repo, dir;
 const config = getPayProConfig({PAYPRO_ENV:'production',PAYPRO_BASE_URL:'https://api.paypro.com.pk',APP_URL:'https://foundation.test',PAYPRO_CLIENT_ID:'fixture',PAYPRO_CLIENT_SECRET:'fixture',PAYPRO_MERCHANT_ID:'fixture',PAYPRO_CALLBACK_USERNAME:'fixture',PAYPRO_CALLBACK_PASSWORD:'fixture',PAYPRO_LIVE_REQUESTS_ENABLED:'true'});
 const input = {amount:100,donorName:'Test Donor',donorEmail:'donor@example.test',donorPhone:'',supportOptionId:'custom'};
-let requests, gatewayBody, gatewayFailure, attachFailure, handlers;
+let requests, gatewayBody, gatewayOrderNumber, gatewayFailure, attachFailure, handlers;
 function setup(repository = () => repo, customConfig = config) {
   return createPaymentHandlers({config:()=>customConfig,repository,gateway:cfg=>new PayProClient(cfg,async req=>{
     requests.push(req);
@@ -21,9 +21,10 @@ function setup(repository = () => repo, customConfig = config) {
     if(req.url.endsWith('/auth')) return {status:200,headers:new Headers({token:'fixture'}),body:'{}'};
     if(req.url.endsWith('/co')) {
       const payload = JSON.parse(req.body)[1];
-      return {status:200,headers:new Headers(),body:JSON.stringify({Status:'00',OrderNumber:payload.OrderNumber,PayProId:'PP123',Click2Pay:'https://api.paypro.com.pk/checkout'})};
+      gatewayOrderNumber=payload.OrderNumber;
+      return {status:200,headers:new Headers(),body:JSON.stringify([{Status:'00'},{OrderNumber:payload.OrderNumber,PayProId:'PP123',Click2Pay:'https://marketplace.paypro.com.pk/checkout?bid=fixture'}])};
     }
-    return {status:200,headers:new Headers(),body:JSON.stringify(gatewayBody)};
+    return {status:200,headers:new Headers(),body:JSON.stringify([{Status:'00'},{OrderNumber:gatewayOrderNumber,...gatewayBody}])};
   })});
 }
 const createRequest = (key = crypto.randomUUID(), body = input, origin = 'https://foundation.test') => new Request('https://foundation.test/api/paypro/create-order',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin,'Idempotency-Key':key},body:JSON.stringify(body)});
@@ -46,8 +47,8 @@ before(async()=>{
 });
 beforeEach(async()=>{
   await db.exec('TRUNCATE donations, payment_rate_limits');
-  requests=[]; gatewayFailure=false; attachFailure=false;
-  gatewayBody={OrderStatus:'PAID',PayProId:'PP123',PaidAmount:'100.00'};
+  requests=[]; gatewayOrderNumber=''; gatewayFailure=false; attachFailure=false;
+  gatewayBody={OrderStatus:'PAID',OrderAmountPaid:'100.00'};
   handlers=setup();
 });
 after(async()=>{await db?.close();await rm(dir,{recursive:true,force:true});});
@@ -64,26 +65,28 @@ test('successful donation is persisted pending then becomes PAID only after matc
 test('failed payment and expired payment do not receive paid_at',async()=>{
   const r=await create();
   for(const status of ['FAILED','EXPIRED']) {
-    gatewayBody={OrderStatus:status,PayProId:'PP123'};
+    gatewayBody={OrderStatus:status};
     const res=await handlers.verify(verifyRequest(r));assert.equal(res.status,200);
     const data=await res.json();assert.equal(data.status,status.toLowerCase());assert.equal(data.paidAt,null);
   }
 });
 test('fake browser success never marks an unpaid donation paid',async()=>{
-  const r=await create();gatewayBody={OrderStatus:'UNPAID',PayProId:'PP123'};
+  const r=await create();gatewayBody={OrderStatus:'UNPAID'};
   const res=await handlers.verify(verifyRequest(r,'&status=success&msg=paid'));
   assert.equal((await res.json()).status,'pending');
   assert.equal((await repo.findByOrderNumber(r.data.orderNumber)).paidAt,null);
 });
-test('invalid callback and absent callback configuration fail before database or gateway',async()=>{
+test('invalid callback is throttled before authentication and absent callback configuration fails closed',async()=>{
   let dbCalls=0;
   const forbiddenRepo=()=>{dbCalls++;throw new Error('must not be called');};
-  for(const cfg of [config,{...config,callbackUsername:'',callbackPassword:''},{...config,callbackPassword:''}]) {
+  for(const cfg of [{...config,callbackUsername:'',callbackPassword:''},{...config,callbackPassword:''}]) {
     const h=setup(forbiddenRepo,cfg);
     const response=await h.callback(callbackRequest('HF-20260907-'+'A'.repeat(32),{password:'invalid'}));
-    assert.ok([401,503].includes(response.status));
+    assert.equal(response.status,503);
   }
   assert.equal(dbCalls,0);assert.equal(requests.length,0);
+  const response=await handlers.callback(callbackRequest('HF-20260907-'+'A'.repeat(32),{password:'invalid'}));
+  assert.equal(response.status,401);assert.equal(requests.length,0);
 });
 test('duplicate and concurrent callbacks preserve paid_at and produce a single durable donation',async()=>{
   const r=await create();
@@ -97,12 +100,12 @@ test('duplicate and concurrent callbacks preserve paid_at and produce a single d
   assert.equal((await db.query('SELECT COUNT(*)::int AS n FROM donations')).rows[0].n,1);
 });
 for(const [name,body] of [
-  ['mismatched amount',{OrderStatus:'PAID',PayProId:'PP123',PaidAmount:99}],
-  ['overpaid amount',{OrderStatus:'PAID',PayProId:'PP123',PaidAmount:101}],
-  ['missing amount',{OrderStatus:'PAID',PayProId:'PP123'}],
-  ['mismatched PayProID',{OrderStatus:'PAID',PayProId:'PP999',PaidAmount:100}],
-  ['missing PayProID',{OrderStatus:'PAID',PaidAmount:100}],
-  ['API success code alone',{Status:'00',PayProId:'PP123',PaidAmount:100}],
+  ['mismatched amount',{OrderStatus:'PAID',OrderAmountPaid:99}],
+  ['overpaid amount',{OrderStatus:'PAID',OrderAmountPaid:101}],
+  ['missing amount',{OrderStatus:'PAID'}],
+  ['mismatched order',{OrderStatus:'PAID',OrderNumber:'HF-20260907-'+'B'.repeat(32),OrderAmountPaid:100}],
+  ['missing order',{OrderStatus:'PAID',OrderNumber:undefined,OrderAmountPaid:100}],
+  ['API success code alone',{OrderAmountPaid:100}],
 ]) test(name+' cannot settle a donation through browser or callback',async()=>{
   const r=await create();gatewayBody=body;
   assert.equal((await handlers.verify(verifyRequest(r))).status,503);
@@ -169,9 +172,12 @@ test('rate limit is durable across repository instances and cannot be bypassed b
   assert.equal(await repo.consumeRateLimit('create',2,60),true);
   assert.equal(await other.consumeRateLimit('create',2,60),true);
   assert.equal(await repo.consumeRateLimit('create',2,60),false);
+  const r=await create();
   for(let i=0;i<120;i++)await repo.consumeRateLimit('verify',120,60);
-  const req=new Request('https://foundation.test/api/paypro/verify?orderNumber=HF-20260907-'+'A'.repeat(32),{headers:{'x-forwarded-for':'arbitrary'}});
-  assert.equal((await handlers.verify(req)).status,429);assert.equal(requests.length,0);
+  const req=verifyRequest(r,'',r.cookie);
+  assert.equal((await handlers.verify(req)).status,429);
+  const unknown=new Request('https://foundation.test/api/paypro/verify?orderNumber=HF-20260907-'+'A'.repeat(32),{headers:{'x-forwarded-for':'arbitrary'}});
+  assert.equal((await handlers.verify(unknown)).status,404);
 });
 test('cross-site creation, tier tampering, oversized and non-JSON inputs are rejected',async()=>{
   assert.equal((await handlers.create(createRequest(crypto.randomUUID(),input,'https://evil.test'))).status,403);
