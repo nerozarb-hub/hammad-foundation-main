@@ -1,15 +1,9 @@
 "use client";
 
-import { CheckCircle2, ShieldAlert, Sparkles } from "lucide-react";
-import { useGeoLocation } from "@/hooks/useGeoLocation";
+import { CheckCircle2, Sparkles } from "lucide-react";
+import { siteUrls } from "@/config/ecosystem";
 
-interface HeroProps {
-    onSelectPlan?: (planId: string) => void;
-}
-
-export function Hero({ onSelectPlan }: HeroProps) {
-    const { city } = useGeoLocation();
-
+export function Hero() {
     return (
         <section className="relative pt-12 pb-20 md:py-24 bg-white shadow-sm overflow-hidden">
             <div className="container relative z-10 flex w-full flex-col gap-12 xl:flex-row xl:gap-16 items-center">
@@ -17,37 +11,36 @@ export function Hero({ onSelectPlan }: HeroProps) {
                 <div className="min-w-0 flex-[1.15] text-left">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-nero/10 border border-brand-nero/20 text-brand-nero text-xs font-black uppercase tracking-wider mb-6">
                         <Sparkles size={14} className="animate-pulse" />
-                        1-to-1 Direct Student Sponsorship
+                        School project of YZ Educational Services
                     </div>
 
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-[900] tracking-tight text-brand-charcoal leading-[1.08] mb-6">
-                        You made it in <span className="text-brand-nero">{city || "Houston"}</span>.<br />
-                        Now make it possible for someone in Lahore.
+                        A clear school project.<br />
+                        A clearer way to support it.
                     </h1>
 
                     <div className="space-y-4 mb-8">
                         <p className="text-lg md:text-xl font-[800] text-brand-charcoal leading-snug">
-                            Overseas Pakistanis are sponsoring 500 students at $30/month.<br />
-                            <span className="text-brand-nero">124 students secured. 376 waiting for their Guardian.</span>
+                            Hammad Foundation is a school project of YZ Educational Services.
                         </p>
                         <p className="text-base text-brand-charcoal/70 leading-relaxed max-w-xl font-medium">
-                            You don&apos;t donate to an abstract overhead fund. You sponsor <strong className="font-black text-brand-charcoal">YOUR student</strong>. You get their name, photo, and weekly WhatsApp progress videos directly from Lahore.
+                            Hammad communicates the school and community experience. Support is selected here, then payment continues through YZ with the recipient and project designation shown before you continue.
                         </p>
                     </div>
 
                     {/* Cost breakdown card */}
                     <div className="bg-brand-gray-50 rounded-2xl p-6 md:p-8 mb-8 border border-brand-charcoal/5 shadow-sm">
                         <p className="text-xs font-black text-brand-charcoal/50 uppercase tracking-[0.15em] mb-4">
-                            For less than Netflix + Spotify ($30/month):
+                            Support options can be designated for:
                         </p>
                         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5">
                             {[
-                                { text: "Full tuition paid on time", highlight: "tuition" },
-                                { text: "Daily hot cooked lunch", highlight: "lunch" },
-                                { text: "All textbooks & stationery", highlight: "supplies" },
-                                { text: "2 Uniform sets & school shoes", highlight: "shoes" },
-                                { text: "Routine healthcare checkups", highlight: "healthcare" },
-                                { text: "Weekly WhatsApp video updates", highlight: "updates" },
+                                { text: "School continuity and learning support", highlight: "learning" },
+                                { text: "Books and student essentials", highlight: "essentials" },
+                                { text: "Guardian community communication", highlight: "community" },
+                                { text: "Programme updates when verified", highlight: "updates" },
+                                { text: "Support designated through YZ", highlight: "payment" },
+                                { text: "Public accountability information", highlight: "evidence" },
                             ].map((item, i) => (
                                 <li key={i} className="flex items-center gap-3 text-sm md:text-base text-brand-charcoal font-semibold">
                                     <CheckCircle2 className="w-5 h-5 text-brand-nero shrink-0" />
@@ -56,27 +49,19 @@ export function Hero({ onSelectPlan }: HeroProps) {
                             ))}
                         </ul>
                         <p className="mt-5 pt-4 border-t border-brand-charcoal/10 text-sm text-brand-charcoal/70 italic font-medium">
-                            You don&apos;t just fund a classroom. You raise <strong className="font-black text-brand-charcoal not-italic">YOUR student</strong> from 4th grade to University graduation.
+                            No payment is confirmed on this site. YZ shows the recipient and Hammad Foundation designation before any payment begins.
                         </p>
                     </div>
 
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (onSelectPlan) {
-                                    onSelectPlan("monthly");
-                                } else {
-                                    const element = document.getElementById("donate");
-                                    element?.scrollIntoView({ behavior: "smooth" });
-                                }
-                            }}
+                        <a
+                            href={`${siteUrls.yz}/donate?project=hammad-foundation`}
                             className="btn-brand min-h-16 h-auto w-full sm:w-auto sm:min-w-[18rem] max-w-full px-6 sm:px-8 py-3 text-base md:text-lg flex flex-col items-center justify-center leading-tight text-center shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] hover:shadow-[0_6px_20px_0_rgba(15,157,88,0.45)]"
                         >
-                            <span className="font-black leading-tight">BECOME A GUARDIAN &rarr; $30/MONTH</span>
-                            <span className="mt-1 text-[11px] leading-snug opacity-80 font-semibold">First video update in 48 hours</span>
-                        </button>
+                            <span className="font-black leading-tight">CHOOSE SUPPORT THROUGH YZ &rarr;</span>
+                            <span className="mt-1 text-[11px] leading-snug opacity-80 font-semibold">Recipient and designation shown before payment</span>
+                        </a>
 
                         <a
                             href="#proof"
@@ -98,10 +83,10 @@ export function Hero({ onSelectPlan }: HeroProps) {
                                 <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white/70">Lahore</span>
                             </div>
                             <div className="max-w-[15rem]">
-                                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-brand-nero">Your student. Your proof.</p>
-                                <p className="text-3xl font-black leading-[1.05] tracking-tight md:text-4xl">A direct line from your phone to a classroom.</p>
+                                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-brand-nero">Mission-facing project</p>
+                                <p className="text-3xl font-black leading-[1.05] tracking-tight md:text-4xl">A direct line to the school project.</p>
                                 <div className="mt-7 h-px w-16 bg-brand-nero" />
-                                <p className="mt-4 text-sm leading-relaxed text-white/65">Tuition, lunch, school supplies, and weekly updates—one clear monthly commitment.</p>
+                                <p className="mt-4 text-sm leading-relaxed text-white/65">School information stays on Hammad Foundation. Support and payment identity stay clear through YZ.</p>
                             </div>
                         </div>
 
@@ -110,28 +95,22 @@ export function Hero({ onSelectPlan }: HeroProps) {
                             <div className="flex justify-between items-end mb-3">
                                 <div>
                                     <p className="text-[10px] font-black text-white/50 uppercase tracking-widest mb-1">
-                                        Live Campaign Progress
+                                        Support route
                                     </p>
                                     <p className="text-2xl md:text-3xl font-[900] leading-none">
-                                        24.8% <span className="text-xs text-white/60 font-medium">Funded</span>
+                                        Through YZ <span className="text-xs text-white/60 font-medium">Educational Services</span>
                                     </p>
                                 </div>
-                                <p className="text-sm font-black text-brand-nero">
-                                    124 / 500 Students
-                                </p>
-                            </div>
-
-                            <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden mb-3.5">
-                                <div className="h-full bg-brand-nero rounded-full transition-all duration-1000" style={{ width: "24.8%" }} />
+                                <p className="text-sm font-black text-brand-nero">Hammad designation</p>
                             </div>
 
                             <div className="space-y-1 bg-white/5 p-3 rounded-xl border border-white/10">
-                                <p className="text-xs font-[900] text-amber-400 flex items-center gap-1.5">
-                                    <ShieldAlert size={14} />
-                                    53 sponsorship places remain
+                                <p className="text-xs font-[900] text-brand-nero flex items-center gap-1.5">
+                                    <CheckCircle2 size={14} />
+                                    Payment recipient: YZ Educational Services
                                 </p>
                                 <p className="text-[11px] text-white/70 font-medium">
-                                    Every place keeps one student in school this year.
+                                    Designated project: Hammad Foundation.
                                 </p>
                             </div>
                         </div>

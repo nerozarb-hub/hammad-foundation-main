@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Phone, Mail, Clock, Bus, MessageCircle, ExternalLink } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle, ExternalLink } from "lucide-react";
 
 export function ContactSection() {
     return (
@@ -14,7 +14,7 @@ export function ContactSection() {
                         Transparency You Can <span className="text-brand-nero italic">Touch</span>
                     </h2>
                     <p className="text-base text-white/70 font-medium">
-                        A real campus with certified teachers, science labs, and 500+ active students. Come visit us in Lahore.
+                        A real school project in Lahore. Contact the school team to confirm current campus arrangements before visiting.
                     </p>
                 </div>
 
@@ -80,17 +80,11 @@ export function ContactSection() {
                             </div>
                         </div>
 
-                        {/* Student Bus Fleet */}
-                        <div className="bg-brand-nero/10 rounded-2xl p-4 border border-brand-nero/20 flex gap-4 items-center">
-                            <div className="w-10 h-10 bg-brand-nero rounded-xl flex items-center justify-center shrink-0">
-                                <Bus className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-sm text-white">Free Student Transport Fleet</h4>
-                                <p className="text-white/60 text-xs">
-                                    Dedicated buses picking up girls from rural villages along Barki Road daily.
-                                </p>
-                            </div>
+                        <div className="bg-brand-nero/10 rounded-2xl p-4 border border-brand-nero/20">
+                            <h4 className="font-bold text-sm text-white">Project and payment contact</h4>
+                            <p className="text-white/60 text-xs mt-1">
+                                The school team answers campus questions. YZ Educational Services handles support payments and transaction questions.
+                            </p>
                         </div>
                     </div>
 
@@ -100,7 +94,7 @@ export function ContactSection() {
                             Want to inspect the classrooms yourself?
                         </h3>
                         <p className="text-base text-white/70 leading-relaxed font-medium">
-                            If you or your relatives are visiting Lahore, drop in anytime. Meet the principal, inspect the science labs, and have lunch with the students.
+                            If you or your relatives are visiting Lahore, contact the school team first. They can confirm current visit arrangements and safeguarding requirements.
                         </p>
 
                         <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
@@ -108,7 +102,7 @@ export function ContactSection() {
                                 Instant Verification
                             </p>
                             <p className="text-sm text-white/80">
-                                Over 124 diaspora Pakistanis from Houston, London, Dubai, and Toronto actively support our students.
+                                Ask for current school information and supporting records directly. Public claims and project updates should remain source-backed and reviewable.
                             </p>
                         </div>
 

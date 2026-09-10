@@ -1,8 +1,12 @@
-import { createPaymentHandlers } from '../../../lib/payments/handlers.ts';
-
-// PayPro's callback specification uses the public `/paypro/uis` signature.
-// Keep this compatibility route on the same authenticated, idempotent handler
-// as the canonical API endpoint so there is only one settlement path.
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const POST = createPaymentHandlers().callback;
+
+export async function POST() {
+  return Response.json(
+    {
+      code: "PAYMENTS_MOVED_TO_YZ",
+      message: "Hammad Foundation no longer accepts provider callbacks. Use the YZ payment boundary.",
+    },
+    { status: 410 },
+  );
+}

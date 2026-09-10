@@ -1,6 +1,6 @@
 export const siteUrls = {
   hammad: process.env.NEXT_PUBLIC_HAMMAD_SITE_URL?.replace(/\/$/, "") || "https://hammad.yzeducationalservices.com",
-  yz: process.env.NEXT_PUBLIC_YZ_SITE_URL?.replace(/\/$/, "") || "https://yzeducationalservices.com",
+  yz: process.env.NEXT_PUBLIC_YZ_SITE_URL?.replace(/\/$/, "") || "https://www.yzeduservices.com",
 } as const;
 
 export const contact = {
@@ -10,12 +10,12 @@ export const contact = {
   location: "Barki Road, Lahore, Pakistan",
 } as const;
 
-export const relationshipDisclosure = "Hammad Foundation is a Lahore education initiative supported operationally by YZ Educational Services.";
+export const relationshipDisclosure = "Hammad Foundation is a school project of YZ Educational Services.";
 export const paymentDisclosure = {
   recipient: "Y.Z Educational Services (Private) Limited",
   recipientPublicName: "YZ Educational Services",
   designation: "Hammad Foundation",
-  statement: "Approved payment processing and transaction records are handled by YZ Educational Services and designated to Hammad Foundation.",
+  statement: "Payments are received by YZ Educational Services and designated for Hammad Foundation.",
   gatewayName: "PayPro V2 Hosted Payment Gateway",
 } as const;
 
@@ -55,4 +55,3 @@ export function buildYzDonationUrl(id: string) {
   const option = getSupportOption(id);
   return option ? `${siteUrls.yz}/donate?project=hammad-foundation&support=${encodeURIComponent(option.id)}` : `${siteUrls.yz}/donate?project=hammad-foundation`;
 }
-

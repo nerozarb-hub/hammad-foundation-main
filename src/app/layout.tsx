@@ -8,9 +8,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrls.hammad),
   title: { default: "Hammad Foundation", template: "%s | Hammad Foundation" },
-  description: "A Lahore education initiative supported operationally by YZ Educational Services.",
+  description: "Hammad Foundation is a school project of YZ Educational Services with a mission-facing school and community experience.",
   alternates: { canonical: "/" },
-  openGraph: { title: "Hammad Foundation", description: "A Lahore education initiative supported operationally by YZ Educational Services.", type: "website", url: siteUrls.hammad },
+  openGraph: { title: "Hammad Foundation", description: "A school project of YZ Educational Services with a clear support and payment route.", type: "website", url: siteUrls.hammad },
   twitter: { card: "summary_large_image" },
 };
 

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Building2, Bus, Utensils, Laptop, BookOpen, ShieldCheck, MapPin, CheckCircle2, MessageCircle } from "lucide-react";
+import { Building2, Bus, Utensils, Laptop, BookOpen, ShieldCheck, MapPin, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Our School Campus | Hammad Foundation Girls High School",
-  description: "Explore Hammad Foundation Girls High School on Barki Road, Lahore — classrooms, science lab, computer lab, free bus fleet, and hot meals.",
+  description: "Learn about the Hammad Foundation school project in Lahore and its relationship with YZ Educational Services.",
   alternates: { canonical: "/our-school" },
 };
 
@@ -12,33 +12,33 @@ export default function OurSchoolPage() {
   const facilities = [
     {
       icon: Building2,
-      title: "14 Modern Classrooms",
-      desc: "Bright, ventilated, and properly furnished learning spaces designed for active engagement and student comfort.",
+      title: "Classroom learning",
+      desc: "Information about the school environment and learning experience is maintained as a project record and confirmed through the school team.",
     },
     {
       icon: Laptop,
-      title: "Digital Literacy & Computer Lab",
-      desc: "Equipped with high-speed internet and modern workstations teaching foundational computing, typing, and coding basics.",
+      title: "Learning resources",
+      desc: "Learning resources and programme details are shared when current and supportable, without presenting unverified facility counts.",
     },
     {
       icon: BookOpen,
-      title: "Science Lab & Reading Library",
-      desc: "Fully stocked physics, chemistry, and biology laboratory equipment aligned with BISE Lahore Board matriculation requirements.",
+      title: "Academic resources",
+      desc: "Academic materials and school information can be verified with the project team before a visit or support decision.",
     },
     {
       icon: Utensils,
-      title: "Daily Nutrition & Cafeteria",
-      desc: "A clean, on-site kitchen providing daily fresh hot lunches (daal, rice, chicken broth) ensuring zero students study on an empty stomach.",
+      title: "Student support",
+      desc: "Support priorities are described on the YZ payment page so donors can see how a contribution is designated before payment.",
     },
     {
       icon: Bus,
-      title: "Free Student Bus Transport",
-      desc: "A dedicated fleet of school buses providing safe, free door-to-door morning and afternoon transit for girls across rural villages.",
+      title: "Family communication",
+      desc: "The school team remains the right contact for current arrangements, family questions, and safeguarding requirements.",
     },
     {
       icon: ShieldCheck,
-      title: "Safe, Secure Gated Campus",
-      desc: "Full-time security personnel, boundary walls, and strict visitor verification ensuring a safe environment for all female students.",
+      title: "Safeguarding first",
+      desc: "Visitors should contact the school team in advance so current campus access and safeguarding arrangements can be confirmed.",
     },
   ];
 
@@ -54,7 +54,7 @@ export default function OurSchoolPage() {
             Hammad Foundation Girls High School
           </h1>
           <p className="text-lg md:text-xl text-brand-charcoal/70 leading-relaxed font-medium max-w-3xl">
-            Located on Barki Road, Lahore. A fully accredited BISE Lahore Board high school serving 500+ girls with tuition-free education, daily nutrition, and safe transport.
+            Located on Barki Road, Lahore. Hammad Foundation is a school project of YZ Educational Services, with school information and support details kept clear and separately identifiable.
           </p>
         </div>
 
@@ -91,10 +91,10 @@ export default function OurSchoolPage() {
         <div className="mb-16">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl font-[900] text-brand-charcoal tracking-tight">
-              A Complete Educational Ecosystem
+            The school experience
             </h2>
             <p className="text-brand-charcoal/60 text-sm md:text-base font-medium mt-2">
-              Education requires more than four walls. We provide the full support system children need to thrive.
+              This page describes the mission-facing school project. Current facilities, programme details, and visit arrangements should be confirmed with the school team.
             </p>
           </div>
 
@@ -120,22 +120,22 @@ export default function OurSchoolPage() {
           </div>
         </div>
 
-        {/* Academic Structure & Board Registration */}
+        {/* Academic information */}
         <div className="bg-white rounded-3xl p-8 md:p-12 border border-brand-charcoal/10 shadow-sm space-y-8 text-brand-charcoal font-medium text-sm md:text-base leading-relaxed mb-16">
           <h2 className="text-2xl md:text-3xl font-[900] text-brand-charcoal tracking-tight">
-            Academic Excellence &amp; Accreditation
+            Academic information and verification
           </h2>
           <div className="grid sm:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <h3 className="font-black text-brand-charcoal text-lg">BISE Lahore Board (Code: LHR-09)</h3>
+              <h3 className="font-black text-brand-charcoal text-lg">What is published</h3>
               <p className="text-brand-charcoal/70">
-                Students sit for official Matriculation examinations (Class 9 and 10) certified by the Board of Intermediate and Secondary Education, Lahore. Our graduates qualify for direct entry into government and private medical, engineering, and commerce colleges.
+                School, programme, and accreditation information should be published only when it has a current source and a named review owner. Ask the school team for the latest records before relying on a specific claim.
               </p>
             </div>
             <div className="space-y-3">
-              <h3 className="font-black text-brand-charcoal text-lg">Faculty &amp; Pedagogical Quality</h3>
+              <h3 className="font-black text-brand-charcoal text-lg">Who can answer questions</h3>
               <p className="text-brand-charcoal/70">
-                Our faculty consists of 18 full-time, certified female educators who live in the local community. They receive continuous curriculum training and performance reviews to maintain top academic standards.
+                The Hammad Foundation school team can confirm current classes, facilities, campus access, and safeguarding requirements. YZ Educational Services handles the public support and payment route.
               </p>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function OurSchoolPage() {
               Come Visit the School in Person
             </h3>
             <p className="text-white/70 text-sm leading-relaxed">
-              We welcome overseas donors and local families Monday through Saturday. Meet the teachers, walk through the labs, and see your impact with your own eyes.
+              Please contact the school team before visiting so current hours, visitor access, and safeguarding arrangements can be confirmed.
             </p>
           </div>
           <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -167,7 +167,7 @@ export default function OurSchoolPage() {
               href="/#donate"
               className="h-14 px-8 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-black inline-flex items-center justify-center border border-white/20 transition-colors"
             >
-              Sponsor a Student &rarr;
+              Support through YZ &rarr;
             </Link>
           </div>
         </div>

@@ -11,31 +11,31 @@ interface FAQItem {
 const faqs: FAQItem[] = [
     {
         q: "How do I know the money actually goes to the student?",
-        a: "We send you photographic receipts every single month: your student's official tuition receipt with their registration code, daily cafeteria lunch distribution photos, and term attendance records. If you do not receive verifiable proof, you can cancel immediately. Simple as that.",
+        a: "Support is initiated through YZ Educational Services, which shows the recipient and Hammad Foundation designation before payment. Public programme updates and records are published only when they have a source and review owner.",
     },
     {
         q: "What if my sponsored student drops out or their family moves?",
-        a: "We immediately re-assign your sponsorship to another child on our waitlist so not a single dollar is lost. We have a waitlist of 376 students right now in Lahore waiting for a Guardian.",
+        a: "The project team should explain any programme change directly. Contact the school team for current programme information and contact YZ for payment or transaction questions.",
     },
     {
-        q: "Is this eligible for Zakat?",
-        a: "Yes, 100%. Education expenses, school uniforms, books, and daily hot meals for underprivileged children qualify under Zakat guidelines. Hammad Foundation is FBR-registered and Zakat-verified.",
+        q: "Who receives a support payment?",
+        a: "Payments are received by YZ Educational Services (Private) Limited and designated for Hammad Foundation. The website does not claim separate NGO, charity, tax-deductible, or Zakat status for Hammad Foundation.",
     },
     {
         q: "Can I meet my student in person if I visit Lahore?",
-        a: "Absolutely. Our campus doors on Barki Road, Lahore are open Monday through Saturday. No appointment is needed for active Guardians—just walk in and ask for Sir Ali Choudhary. For overseas Guardians, we provide direct WhatsApp video messages.",
+        a: "Contact the school team before visiting so the current campus hours, safeguarding requirements, and visitor arrangements can be confirmed.",
     },
     {
-        q: "What if I need to cancel my $30/month sponsorship?",
-        a: "You can cancel anytime with one click or a simple message. No awkward questions, no guilt trips. Life circumstances change. When a Guardian cancels, we step in with reserve funds and find a new Guardian.",
+        q: "What if I need to cancel recurring support?",
+        a: "Cancellation and refund terms must be shown on the YZ payment page before any recurring support is enabled. Contact YZ with the transaction reference for payment questions.",
     },
     {
         q: "Why sponsor 1-to-1 instead of donating to a large pooled NGO?",
-        a: "Large organizations do great work, but your donation enters a massive corporate pool where significant percentages go toward marketing, gala events, and executive salaries. With Hammad Foundation, you know your student's name, see their classroom video every week, and watch them rise.",
+        a: "Hammad Foundation is the mission-facing school project. YZ Educational Services is the parent operating and payment entity. The relationship is stated openly so supporters can decide with the correct information.",
     },
     {
-        q: "This sounds almost too good to be true.",
-        a: "Don't take our word for it. Message Director Sir Ali Choudhary directly on WhatsApp at +92 300 8099015. Ask for a live camera walkthrough of the school today. If you aren't convinced, don't donate.",
+        q: "How can I verify information before supporting?",
+        a: "Review the relationship, payment identity, transparency page, and current school information. You can also contact the school team with questions before using the YZ support page.",
     },
 ];
 

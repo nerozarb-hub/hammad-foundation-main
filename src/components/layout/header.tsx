@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { siteUrls } from "@/config/ecosystem";
 
 export function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -12,8 +13,13 @@ export function Header() {
             <div className="container flex w-full min-h-16 max-w-[1280px] items-center justify-between gap-4 py-2 pr-8 lg:pr-16">
                 {/* Brand */}
                 <Link href="/" className="flex min-w-0 items-center gap-2 hover:opacity-90 transition-opacity">
-                    <span className="text-xl font-[900] tracking-tight text-brand-charcoal">
-                        HAMMAD <span className="text-brand-nero">FOUNDATION</span>
+                    <span>
+                        <span className="block text-xl font-[900] tracking-tight text-brand-charcoal">
+                            HAMMAD <span className="text-brand-nero">FOUNDATION</span>
+                        </span>
+                        <span className="block text-[9px] font-bold uppercase tracking-[0.16em] text-brand-charcoal/45">
+                            A project of YZ Educational Services
+                        </span>
                     </span>
                 </Link>
 
@@ -26,13 +32,13 @@ export function Header() {
                         Our Story
                     </Link>
                     <Link href="/guardian-programme" className="hover:text-brand-nero transition-colors">
-                        Guardian Programme
+                        Support through YZ
                     </Link>
-                    <Link href="/#how-it-works" className="hover:text-brand-nero transition-colors">
-                        How It Works
+                    <Link href="/how-we-are-structured" className="hover:text-brand-nero transition-colors">
+                        How YZ &amp; Hammad Work
                     </Link>
                     <Link href="/transparency" className="hover:text-brand-nero transition-colors">
-                        Proof &amp; Receipts
+                        Transparency
                     </Link>
                     <Link href="/#faq" className="hover:text-brand-nero transition-colors">
                         FAQ
@@ -49,15 +55,15 @@ export function Header() {
                             Lahore, PK &bull; Barki Rd
                         </p>
                         <p className="text-xs font-bold text-brand-nero">
-                            124 / 500 Secured
+                            Support through YZ Educational Services
                         </p>
                     </div>
 
                     <Link
-                        href="/#donate"
+                        href={`${siteUrls.yz}/donate?project=hammad-foundation`}
                         className="hidden 2xl:inline-flex items-center justify-center btn-brand h-10 px-5 text-xs font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg"
                     >
-                        BECOME A GUARDIAN
+                        SUPPORT THROUGH YZ
                     </Link>
 
                     <button
@@ -96,21 +102,21 @@ export function Header() {
                             onClick={() => setMobileOpen(false)}
                             className="py-2.5 px-3 rounded-lg text-sm font-bold text-brand-charcoal hover:bg-brand-gray-50"
                         >
-                            Guardian Programme
+                            Support through YZ
                         </Link>
                         <Link
-                            href="/#how-it-works"
+                            href="/how-we-are-structured"
                             onClick={() => setMobileOpen(false)}
                             className="py-2.5 px-3 rounded-lg text-sm font-bold text-brand-charcoal hover:bg-brand-gray-50"
                         >
-                            How It Works
+                            How YZ &amp; Hammad Work
                         </Link>
                         <Link
                             href="/transparency"
                             onClick={() => setMobileOpen(false)}
                             className="py-2.5 px-3 rounded-lg text-sm font-bold text-brand-charcoal hover:bg-brand-gray-50"
                         >
-                            Proof &amp; Receipts
+                            Transparency
                         </Link>
                         <Link
                             href="/#faq"
@@ -128,11 +134,11 @@ export function Header() {
                         </Link>
                         <div className="pt-3 border-t border-brand-charcoal/10">
                             <Link
-                                href="/#donate"
+                                href={`${siteUrls.yz}/donate?project=hammad-foundation`}
                                 onClick={() => setMobileOpen(false)}
                                 className="btn-brand w-full h-12 text-sm font-black flex items-center justify-center rounded-xl shadow"
                             >
-                                BECOME A GUARDIAN &rarr; $30/MO
+                                SUPPORT THROUGH YZ &rarr;
                             </Link>
                         </div>
                     </div>
