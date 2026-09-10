@@ -47,6 +47,8 @@ test('auth, Create Order, and GGOS use the configured host and documented GET bo
   const createPayload = JSON.parse(requests[1].body);
   assert.deepEqual(createPayload[0], { MerchantId: 'fixture' });
   assert.equal('MerchantId' in createPayload[1], false);
+  assert.equal(createPayload[1].OrderAmount, '100');
+  assert.equal(createPayload[1].OrderExpireAfterSeconds, '0');
   assert.match(createPayload[1].IssueDate, /^\d{2}\/\d{2}\/\d{4}$/);
   assert.match(createPayload[1].OrderDueDate, /^\d{2}\/\d{2}\/\d{4}$/);
   const checkout = new URL(order.click2PayUrl);

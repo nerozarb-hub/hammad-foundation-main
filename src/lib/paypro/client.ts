@@ -38,6 +38,11 @@ function payProDate(date: Date): string {
   return `${day}/${month}/${date.getUTCFullYear()}`;
 }
 
+function payProAmount(value: number): string {
+  const minor = moneyMinor(value);
+  return minor % 100 === 0 ? String(minor / 100) : (minor / 100).toFixed(2);
+}
+
 export class PayProClient {
   private config: PayProConfig;
   private transport: PayProTransportFn;
@@ -57,10 +62,10 @@ export class PayProClient {
     const now = new Date();
     const payload = [{ MerchantId: this.config.merchantId }, {
       OrderNumber: params.orderNumber,
-      OrderAmount: (moneyMinor(params.amount) / 100).toFixed(2),
+      OrderAmount: payProAmount(params.amount),
       OrderDueDate: payProDate(new Date(now.getTime() + 14 * 86400_000)),
       OrderType: 'Service', IssueDate: payProDate(now),
-      OrderExpireAfterSeconds: String(params.expireAfterSeconds ?? 86400),
+      OrderExpireAfterSeconds: String(params.expireAfterSeconds ?? 0),
       CustomerName: params.donorName, CustomerMobile: params.donorPhone || '', CustomerEmail: params.donorEmail || '', CustomerAddress: '',
     }];
     const { status, data } = responsePair((await sendPayProRequest(this.config, '/v2/ppro/co', 'POST', token, payload, this.transport)).body);
