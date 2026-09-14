@@ -104,6 +104,7 @@ export class PayProClient {
       firstObjectDescription: firstObj?.Description,
       firstObjectKeys: firstObj ? Object.keys(firstObj) : [],
       secondObjectKeys: secondObj ? Object.keys(secondObj) : [],
+      secondObjectDescription: typeof secondObj?.Description === 'string' ? secondObj.Description : undefined,
       hasPayProId: Boolean(secondObj?.PayProId),
       orderNumberMatches: secondObj?.OrderNumber === params.orderNumber,
       hasClick2Pay: Boolean(secondObj?.Click2Pay),
