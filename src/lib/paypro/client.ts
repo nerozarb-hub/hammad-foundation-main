@@ -1,5 +1,5 @@
 import 'server-only';
-import { getPayProConfig, type PayProConfig } from './config.ts';
+import { getPayProConfig, assertGatewayEnabled, type PayProConfig } from './config.ts';
 import { isValidPayProDomain } from './security.ts';
 import { nodePayProTransport, sendPayProRequest, type PayProTransportFn } from './transport.ts';
 
@@ -68,7 +68,53 @@ export class PayProClient {
       OrderExpireAfterSeconds: String(params.expireAfterSeconds ?? 0),
       CustomerName: params.donorName, CustomerMobile: params.donorPhone || '', CustomerEmail: params.donorEmail || '', CustomerAddress: '',
     }];
-    const { status, data } = responsePair((await sendPayProRequest(this.config, '/v2/ppro/co', 'POST', token, payload, this.transport)).body);
+
+    assertGatewayEnabled(this.config);
+    let rawResponse: { status: number; headers: Headers; body: string };
+    try {
+      rawResponse = await this.transport({
+        url: `${this.config.baseUrl}/v2/ppro/co`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(token ? { token } : {}) },
+        body: JSON.stringify(payload),
+      });
+    } catch (transportErr: unknown) {
+      console.info('[paypro-co-diag]', JSON.stringify({
+        stage: 'transport_error',
+        error: transportErr instanceof Error ? transportErr.message : 'transport_error',
+      }));
+      throw transportErr;
+    }
+
+    let parsedJson: unknown;
+    try { parsedJson = JSON.parse(rawResponse.body); } catch { /* unparseable */ }
+    const isArray = Array.isArray(parsedJson);
+    const firstObj = isArray && typeof (parsedJson as unknown[])[0] === 'object' && (parsedJson as unknown[])[0] !== null
+      ? ((parsedJson as unknown[])[0] as Record<string, unknown>) : null;
+    const secondObj = isArray && (parsedJson as unknown[]).length > 1 && typeof (parsedJson as unknown[])[1] === 'object' && (parsedJson as unknown[])[1] !== null
+      ? ((parsedJson as unknown[])[1] as Record<string, unknown>) : null;
+
+    console.info('[paypro-co-diag]', JSON.stringify({
+      stage: 'create_order_response',
+      httpStatus: rawResponse.status,
+      contentType: rawResponse.headers.get('content-type'),
+      isJsonArray: isArray,
+      arrayLength: isArray ? (parsedJson as unknown[]).length : null,
+      firstObjectStatus: firstObj?.Status,
+      firstObjectDescription: firstObj?.Description,
+      firstObjectKeys: firstObj ? Object.keys(firstObj) : [],
+      secondObjectKeys: secondObj ? Object.keys(secondObj) : [],
+      hasPayProId: Boolean(secondObj?.PayProId),
+      orderNumberMatches: secondObj?.OrderNumber === params.orderNumber,
+      hasClick2Pay: Boolean(secondObj?.Click2Pay),
+      isTrustedClick2PayHost: typeof secondObj?.Click2Pay === 'string' ? isValidPayProDomain(secondObj.Click2Pay) : false,
+    }));
+
+    if (rawResponse.status < 200 || rawResponse.status >= 300) {
+      throw new Error(`Gateway request rejected with HTTP ${rawResponse.status}`);
+    }
+
+    const { status, data } = responsePair(rawResponse.body);
     const payProId = identifier(data.PayProId);
     if (!payProId || (data.OrderNumber !== undefined && data.OrderNumber !== params.orderNumber)) throw new Error('Order identity mismatch');
     const rawClick2PayUrl = typeof data.Click2Pay === 'string' ? data.Click2Pay : '';

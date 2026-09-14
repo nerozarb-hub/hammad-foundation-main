@@ -58,7 +58,11 @@ export function createPaymentHandlers(deps: Dependencies = defaults) {
         if (result.orderNumber !== record.orderNumber) throw new Error('Gateway order mismatch');
         const stored = await repo.attachPayProId(record.orderNumber, result.payProId, result.click2PayUrl, result.billUrl);
         return json({ success: true, orderNumber: stored.orderNumber, payProId: stored.payProId, click2PayUrl: stored.click2PayUrl }, 200, headers);
-      } catch { console.error('[payments] checkout_unavailable'); return json({ success: false, error: 'Payment initialization is unavailable. If you already submitted, contact support before starting another payment.' }, 503); }
+      } catch (err: unknown) {
+        const reason = err instanceof Error ? err.message : 'unknown';
+        console.error('[payments] checkout_unavailable', { reason });
+        return json({ success: false, error: 'Payment initialization is unavailable. If you already submitted, contact support before starting another payment.' }, 503);
+      }
     },
     async verify(req: Request) {
       try {
