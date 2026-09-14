@@ -28,10 +28,22 @@ export async function POST(request: Request) {
 
     assertGatewayEnabled(config);
     stage = 'database';
-    await verifyRuntimeDatabase(getPaymentPool());
+    const database = getPaymentPool();
+    await verifyRuntimeDatabase(database);
     stage = 'authentication';
     await new PayProClient(config).authenticate();
-    return Response.json({ success: true, configuration: 'pass', database: 'pass', authentication: 'pass' });
+    stage = 'recent-attempts';
+    const attempts = await database.query(`SELECT order_number, status, amount,
+      gateway_attempted_at IS NOT NULL AS gateway_attempted,
+      paypro_id IS NOT NULL AS paypro_id_attached
+      FROM donations ORDER BY created_at DESC LIMIT 5`);
+    return Response.json({
+      success: true,
+      configuration: 'pass',
+      database: 'pass',
+      authentication: 'pass',
+      attempts: attempts.rows,
+    });
   } catch {
     console.error(`[payments] readiness_failed:${stage}`);
     return Response.json({ success: false, stage }, { status: 503 });
