@@ -1,35 +1,52 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, Heart, ShieldCheck } from "lucide-react";
 
 export function FinalCTA() {
-    return (
-        <section className="py-20 md:py-32 bg-white shadow-sm relative overflow-hidden border-t border-brand-charcoal/5">
-            <div className="container relative z-10">
-                <div className="max-w-3xl mx-auto text-center">
-                    <span className="text-xs font-black uppercase tracking-[0.25em] text-brand-nero bg-brand-nero/10 px-3.5 py-1.5 rounded-full">A clear next step</span>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-[900] text-brand-charcoal leading-tight tracking-tight mt-4 mb-8">Support the school project with the full context</h2>
-                    <div className="space-y-6 text-base md:text-lg leading-relaxed text-brand-charcoal/70 mb-12 font-medium">
-                        <p>Hammad Foundation is the mission-facing school project. YZ Educational Services is the parent operating and payment entity.</p>
-                        <div className="max-w-lg mx-auto bg-brand-charcoal p-6 md:p-8 rounded-3xl text-white text-base md:text-lg leading-relaxed shadow-xl border border-brand-charcoal/10">
-                            <div className="flex items-center justify-center gap-2 text-brand-nero font-black text-sm uppercase tracking-widest mb-3"><ShieldCheck size={18} /> Payment identity</div>
-                            <p>YZ shows the payment recipient and Hammad Foundation designation before a supporter continues.</p>
-                        </div>
-                        <p className="text-xl md:text-2xl font-[900] text-brand-charcoal tracking-tight pt-4">Choose a support option on YZ when you are ready.</p>
-                    </div>
+  return (
+    <section className="py-20 md:py-32 bg-brand-charcoal text-white relative overflow-hidden border-t border-brand-charcoal/10">
+      <div className="container relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-nero/20 border border-brand-nero/30 text-brand-nero text-xs font-black uppercase tracking-wider mb-6">
+            <Heart size={14} className="fill-current" />
+            <span>Protect A Student&apos;s Education Today</span>
+          </div>
 
-                    <div className="space-y-4">
-                        <Link
-                            href="https://yzeducationalservices.com/donate?project=hammad-foundation"
-                            className="btn-brand w-full sm:w-auto h-16 px-12 text-base md:text-lg font-black rounded-2xl shadow-xl hover:shadow-2xl inline-flex items-center justify-center gap-2 mx-auto"
-                        >
-                            OPEN YZ SUPPORT PAGE <ArrowRight size={20} />
-                        </Link>
-                        <p className="text-xs font-bold text-brand-charcoal/50">The payment recipient and project designation are shown before payment.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[900] tracking-tight leading-tight mb-6">
+            Join 124 Guardians Standing Between a Child and the Streets.
+          </h2>
+
+          <p className="text-base sm:text-lg md:text-xl text-white/75 font-medium leading-relaxed mb-10 max-w-2xl mx-auto">
+            376 bright girls in Lahore are waiting for their school fees, books, and uniforms to be covered before the school year closes. Your support changes a life permanently.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <Link
+              href="/donate?support=guardian-monthly"
+              className="btn-brand w-full sm:w-auto min-h-16 px-10 text-base md:text-lg font-black rounded-2xl shadow-xl hover:shadow-2xl flex items-center justify-center gap-2"
+            >
+              <span>Become a Guardian · $30/mo</span>
+              <ArrowRight size={20} />
+            </Link>
+
+            <Link
+              href="/donate"
+              className="w-full sm:w-auto min-h-16 px-8 rounded-2xl border-2 border-white/20 text-white hover:bg-white/10 text-sm md:text-base font-black flex items-center justify-center transition-all"
+            >
+              One-Time Donation ($15 / $25 / Custom)
+            </Link>
+          </div>
+
+          {/* Compact Trust Note */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70">
+            <ShieldCheck size={16} className="text-brand-nero shrink-0" />
+            <span>
+              Support received by <strong className="text-white">YZ Educational Services</strong> · Designated for <strong className="text-white">Hammad Foundation</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

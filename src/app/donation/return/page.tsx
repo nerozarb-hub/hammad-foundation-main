@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2, Clock3, Loader2, ShieldCheck, XCircle, ArrowRight, HeartHandshake } from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, ShieldCheck, XCircle, ArrowRight, MessageCircle, Heart } from "lucide-react";
 
 type Verification = {
   success?: boolean;
@@ -60,51 +60,51 @@ function ReturnContent() {
   const failed = result?.status === "failed" || result?.status === "expired";
 
   return (
-    <div className="min-h-screen bg-brand-gray-50/50 px-4 py-16 md:py-24 selection:bg-brand-nero selection:text-white">
-      <div className="mx-auto max-w-2xl rounded-3xl border border-brand-charcoal/10 bg-white p-8 sm:p-12 text-center shadow-xl">
+    <div className="min-h-screen bg-brand-sand px-4 py-16 md:py-24 selection:bg-brand-nero selection:text-white">
+      <div className="mx-auto max-w-2xl rounded-3xl border border-brand-charcoal/10 bg-white p-8 sm:p-12 text-center shadow-2xl">
         {loading ? (
           <Loader2 className="mx-auto animate-spin text-brand-nero" size={56} />
         ) : paid ? (
-          <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-brand-nero flex items-center justify-center mx-auto">
-            <CheckCircle2 size={40} className="stroke-[2.5]" />
+          <div className="w-20 h-20 rounded-full bg-emerald-500/15 text-brand-nero flex items-center justify-center mx-auto mb-2">
+            <CheckCircle2 size={48} className="stroke-[2.5]" />
           </div>
         ) : failed ? (
-          <div className="w-16 h-16 rounded-full bg-red-500/15 text-red-500 flex items-center justify-center mx-auto">
-            <XCircle size={40} className="stroke-[2.5]" />
+          <div className="w-20 h-20 rounded-full bg-red-500/15 text-red-500 flex items-center justify-center mx-auto mb-2">
+            <XCircle size={48} className="stroke-[2.5]" />
           </div>
         ) : (
-          <div className="w-16 h-16 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center mx-auto">
-            <Clock3 size={40} className="stroke-[2.5]" />
+          <div className="w-20 h-20 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center mx-auto mb-2">
+            <Clock3 size={48} className="stroke-[2.5]" />
           </div>
         )}
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-nero/10 text-brand-nero text-[11px] font-bold uppercase tracking-wider mt-6">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-nero/10 text-brand-nero text-[11px] font-black uppercase tracking-wider mt-4">
           <ShieldCheck size={14} />
-          PayPro V2 Official Verification
+          {paid ? "Official Contribution Confirmed" : "PayPro Gateway Verification"}
         </div>
 
         <h1 className="mt-4 text-2xl sm:text-4xl font-[900] tracking-tight text-brand-charcoal">
           {loading
             ? "Verifying Payment with PayPro..."
             : paid
-            ? "Thank You! Donation Confirmed"
+            ? "Thank You! A Child's Future is Protected."
             : failed
             ? "Payment Was Not Completed"
-            : "Payment Processing / Pending"}
+            : "Payment Processing / Awaiting Settlement"}
         </h1>
 
         <p className="mx-auto mt-4 max-w-lg text-sm sm:text-base leading-relaxed text-brand-charcoal/70 font-medium">
           {loading
             ? "Connecting directly to PayPro settlement clearing network to verify your transaction."
+            : paid
+            ? "Your contribution has been settled and credited directly to Hammad Foundation School in Barki Road, Lahore. You will receive your official student match and field updates."
             : result?.message ||
               result?.error ||
-              (paid
-                ? "Your contribution has been settled and credited directly to the Hammad Foundation School education fund."
-                : "If you have already paid, your bank may take a few minutes to notify PayPro.")}
+              "If you have already paid, your bank may take a few minutes to notify PayPro."}
         </p>
 
         {result?.orderNumber && (
-          <div className="mt-8 space-y-3 rounded-2xl border border-brand-charcoal/10 bg-brand-gray-50/70 p-6 text-left text-sm">
+          <div className="mt-8 space-y-3 rounded-2xl border border-brand-charcoal/10 bg-brand-gray-50/80 p-6 text-left text-sm">
             <div className="flex justify-between gap-4 border-b border-brand-charcoal/10 pb-3">
               <span className="text-brand-charcoal/60 font-semibold text-xs uppercase tracking-wider">
                 Order Reference
@@ -134,17 +134,40 @@ function ReturnContent() {
           </div>
         )}
 
+        {paid && (
+          <div className="mt-6 p-5 rounded-2xl bg-brand-nero/10 border border-brand-nero/20 text-left">
+            <div className="flex items-center gap-2 text-brand-nero font-black text-xs uppercase tracking-wider mb-2">
+              <Heart size={15} className="fill-current" />
+              <span>Next Step: Your Student Welcome Packet</span>
+            </div>
+            <p className="text-xs text-brand-charcoal/80 leading-relaxed font-medium">
+              Send your payment confirmation to Director Sir Ali Choudhary on WhatsApp. He will manually assign your student, send their photo &amp; bio, and add you to the Friday classroom video update list.
+            </p>
+            <div className="mt-4">
+              <a
+                href={`https://wa.me/923008099015?text=Salaam%20Sir%20Ali!%20I%20have%20completed%20my%20donation%20(Order:%20${result?.orderNumber || ""}).%20Please%20share%20my%20student%20details.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-brand-nero text-white text-xs font-black uppercase tracking-wider shadow hover:bg-brand-nero/90 transition-colors"
+              >
+                <MessageCircle size={16} />
+                <span>Message Sir Ali Choudhary on WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-nero px-6 py-3.5 font-black text-sm uppercase tracking-wider text-white hover:bg-brand-nero/90 transition-colors shadow-lg shadow-brand-nero/20"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-charcoal px-6 py-3.5 font-black text-xs uppercase tracking-wider text-white hover:bg-brand-charcoal/90 transition-colors"
           >
-            Back to Home <ArrowRight size={16} />
+            Back to School Home <ArrowRight size={15} />
           </Link>
           {!paid && (
             <Link
               href="/donate"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-charcoal/20 px-6 py-3.5 font-bold text-sm text-brand-charcoal hover:bg-brand-gray-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-charcoal/20 px-6 py-3.5 font-bold text-xs uppercase tracking-wider text-brand-charcoal hover:bg-brand-gray-50 transition-colors"
             >
               Try Again
             </Link>
