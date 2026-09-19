@@ -138,7 +138,12 @@ export function timingSafeCompare(a: string | undefined | null, b: string | unde
 export function isValidPayProDomain(urlStr: string): boolean {
   try {
     const url = new URL(urlStr);
+    const host = url.hostname.toLowerCase();
     return url.protocol === 'https:' && !url.username && !url.password && !url.port &&
-      (url.hostname === 'paypro.com.pk' || url.hostname.endsWith('.paypro.com.pk'));
+      (
+        host === 'paypro.com.pk' || host.endsWith('.paypro.com.pk') ||
+        host === 'paypropayments.com' || host.endsWith('.paypropayments.com') ||
+        host === 'cpay.pk' || host.endsWith('.cpay.pk')
+      );
   } catch { return false; }
 }

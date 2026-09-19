@@ -60,10 +60,10 @@ export function Header() {
                     </div>
 
                     <Link
-                        href={`${siteUrls.yz}/donate?project=hammad-foundation`}
+                        href="/donate"
                         className="hidden 2xl:inline-flex items-center justify-center btn-brand h-10 px-5 text-xs font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg"
                     >
-                        SUPPORT THROUGH YZ
+                        DONATE NOW &rarr;
                     </Link>
 
                     <button
@@ -134,11 +134,11 @@ export function Header() {
                         </Link>
                         <div className="pt-3 border-t border-brand-charcoal/10">
                             <Link
-                                href={`${siteUrls.yz}/donate?project=hammad-foundation`}
+                                href="/donate"
                                 onClick={() => setMobileOpen(false)}
                                 className="btn-brand w-full h-12 text-sm font-black flex items-center justify-center rounded-xl shadow"
                             >
-                                SUPPORT THROUGH YZ &rarr;
+                                DONATE ONLINE &rarr;
                             </Link>
                         </div>
                     </div>

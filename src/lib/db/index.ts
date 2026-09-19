@@ -17,6 +17,7 @@ export interface IDonationRepository {
   attachPayProId(orderNumber: string, payProId: string, click2PayUrl: string, billUrl?: string): Promise<StoredDonation>;
   recordVerification(orderNumber: string, payProId: string, status: DonationStatus, paidAmount?: number): Promise<StoredDonation>;
   consumeRateLimit(bucket: string, limit: number, windowSeconds: number): Promise<boolean>;
+  listRecent(limit?: number): Promise<StoredDonation[]>;
 }
 function date(value: unknown): string { return new Date(value as string).toISOString(); }
 function map(row: Record<string, unknown>): StoredDonation {
@@ -78,6 +79,11 @@ export class PostgresDonationRepository implements IDonationRepository {
       resets_at=CASE WHEN payment_rate_limits.resets_at<=NOW() THEN NOW()+$3*INTERVAL '1 second' ELSE payment_rate_limits.resets_at END
       WHERE payment_rate_limits.resets_at<=NOW() OR payment_rate_limits.hits<$2 RETURNING hits`, [bucket,limit,windowSeconds]);
     return r.rows.length === 1;
+  }
+  async listRecent(limit = 50) {
+    const safeLimit = Math.min(Math.max(Number(limit) || 50, 1), 200);
+    const r = await this.query('SELECT * FROM donations ORDER BY created_at DESC LIMIT $1', [safeLimit]);
+    return r.rows.map(map);
   }
 }
 export function getDonationRepository(): IDonationRepository { return new PostgresDonationRepository(); }

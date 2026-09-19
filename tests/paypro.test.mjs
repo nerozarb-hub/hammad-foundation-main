@@ -73,7 +73,9 @@ test('gateway errors and malformed responses fail closed without reflecting resp
 });
 test('redirects require HTTPS and genuine PayPro domains', () => {
   assert.equal(isValidPayProDomain('https://api.paypro.com.pk/checkout'), true);
-  for (const url of ['https://paypro.com.pk.evil.test/', 'http://api.paypro.com.pk/', 'https://user:pass@api.paypro.com.pk/', 'https://evil.test/', 'https://api.paypro.com.pk:8443/']) assert.equal(isValidPayProDomain(url),false);
+  assert.equal(isValidPayProDomain('https://marketplace.paypropayments.com/pyb/?bid=ANNlS5oKuAZPYIjYyweHvGx47sKkd3t1Bo7NxLuUXg0='), true);
+  assert.equal(isValidPayProDomain('https://cpay.pk/checkout'), true);
+  for (const url of ['https://paypro.com.pk.evil.test/', 'http://api.paypro.com.pk/', 'https://user:pass@api.paypro.com.pk/', 'https://evil.test/', 'https://api.paypro.com.pk:8443/', 'https://paypropayments.com.evil.com/']) assert.equal(isValidPayProDomain(url),false);
 });
 test('amount validation enforces fixed support tiers, precision and custom limits', () => {
   assert.equal(validateDonationInput({amount:9000,donorName:'Test Donor',supportOptionId:'guardian-monthly'}).valid,true);

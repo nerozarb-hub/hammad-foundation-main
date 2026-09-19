@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CheckCircle2, Sparkles } from "lucide-react";
 import { siteUrls } from "@/config/ecosystem";
 
@@ -49,19 +50,19 @@ export function Hero() {
                             ))}
                         </ul>
                         <p className="mt-5 pt-4 border-t border-brand-charcoal/10 text-sm text-brand-charcoal/70 italic font-medium">
-                            No payment is confirmed on this site. YZ shows the recipient and Hammad Foundation designation before any payment begins.
+                            Direct, secure payment with instant PayPro checkout receipt.
                         </p>
                     </div>
 
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                        <a
-                            href={`${siteUrls.yz}/donate?project=hammad-foundation`}
+                        <Link
+                            href="/donate"
                             className="btn-brand min-h-16 h-auto w-full sm:w-auto sm:min-w-[18rem] max-w-full px-6 sm:px-8 py-3 text-base md:text-lg flex flex-col items-center justify-center leading-tight text-center shadow-[0_4px_14px_0_rgba(15,157,88,0.39)] hover:shadow-[0_6px_20px_0_rgba(15,157,88,0.45)]"
                         >
-                            <span className="font-black leading-tight">CHOOSE SUPPORT THROUGH YZ &rarr;</span>
-                            <span className="mt-1 text-[11px] leading-snug opacity-80 font-semibold">Recipient and designation shown before payment</span>
-                        </a>
+                            <span className="font-black leading-tight">DONATE NOW ONLINE &rarr;</span>
+                            <span className="mt-1 text-[11px] leading-snug opacity-80 font-semibold">Instant PayPro Checkout &bull; Verified Receipt</span>
+                        </Link>
 
                         <a
                             href="#proof"
