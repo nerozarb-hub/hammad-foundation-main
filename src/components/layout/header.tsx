@@ -24,7 +24,7 @@ export function Header() {
                 </Link>
 
                 {/* Desktop Nav */}
-                <nav className="hidden 2xl:flex gap-5 items-center text-xs font-black uppercase tracking-[0.12em] text-brand-charcoal/65">
+                <nav className="hidden xl:flex gap-3.5 2xl:gap-5 items-center text-[11px] 2xl:text-xs font-black uppercase tracking-[0.1em] text-brand-charcoal/65">
                     <Link href="/our-school" className="hover:text-brand-nero transition-colors">
                         Our School
                     </Link>
@@ -50,7 +50,7 @@ export function Header() {
 
                 {/* Status & CTA */}
                 <div className="ml-auto flex shrink-0 items-center gap-3 lg:gap-4">
-                    <div className="hidden 2xl:flex flex-col items-end">
+                    <div className="hidden xl:flex flex-col items-end">
                         <p className="text-[10px] font-black text-brand-charcoal/40 uppercase tracking-widest">
                             Lahore, PK &bull; Barki Rd
                         </p>
@@ -61,14 +61,14 @@ export function Header() {
 
                     <Link
                         href="/donate"
-                        className="hidden 2xl:inline-flex items-center justify-center btn-brand h-10 px-5 text-xs font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg"
+                        className="inline-flex items-center justify-center btn-brand h-9 sm:h-10 px-3.5 sm:px-5 text-[11px] sm:text-xs font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all"
                     >
                         DONATE NOW &rarr;
                     </Link>
 
                     <button
                         type="button"
-                        className="2xl:hidden text-brand-charcoal p-2 rounded-lg hover:bg-brand-gray-50 transition-colors"
+                        className="xl:hidden text-brand-charcoal p-2 rounded-lg hover:bg-brand-gray-50 transition-colors"
                         onClick={() => setMobileOpen(!mobileOpen)}
                         aria-label="Toggle navigation"
                         aria-expanded={mobileOpen}
@@ -81,7 +81,7 @@ export function Header() {
 
             {/* Mobile Drawer */}
             {mobileOpen && (
-                <div id="hammad-mobile-nav" className="2xl:hidden bg-white border-t border-brand-charcoal/10 p-5 shadow-xl">
+                <div id="hammad-mobile-nav" className="xl:hidden bg-white border-t border-brand-charcoal/10 p-5 shadow-xl">
                     <div className="flex flex-col gap-2">
                         <Link
                             href="/our-school"
