@@ -3,6 +3,7 @@ import test from 'node:test';
 import { getPayProConfig, assertGatewayEnabled } from '../src/lib/paypro/config.ts';
 import { PayProClient } from '../src/lib/paypro/client.ts';
 import { isValidPayProDomain, validateDonationInput } from '../src/lib/paypro/security.ts';
+import { sameOrigin } from '../src/lib/payments/http.ts';
 import { poolOptions, getPaymentPool } from '../src/lib/db/pool.ts';
 
 export const fixtureConfig = (baseUrl = 'https://api.paypro.com.pk') => getPayProConfig({ PAYPRO_ENV: 'production', PAYPRO_BASE_URL: baseUrl,
@@ -93,3 +94,10 @@ test('database always requires configured, certificate-verified TLS', () => {
   assert.throws(() => poolOptions('postgresql://localhost/test?sslmode=no-verify'));
   assert.throws(() => poolOptions('postgresql://localhost/test?ssl=false'));
 });
+test('same-origin checks accept attached production aliases and reject cross-site requests', () => {
+  const alias = new Request('https://hammad-foundation-main.vercel.app/api/paypro/create-order', { headers: { Origin: 'https://hammad-foundation-main.vercel.app', 'Sec-Fetch-Site': 'same-origin' } });
+  const evil = new Request('https://hammad.yzeducationalservices.com/api/paypro/create-order', { headers: { Origin: 'https://evil.test', 'Sec-Fetch-Site': 'cross-site' } });
+  assert.equal(sameOrigin(alias, 'https://hammad.yzeducationalservices.com'), true);
+  assert.equal(sameOrigin(evil, 'https://hammad.yzeducationalservices.com'), false);
+});
+

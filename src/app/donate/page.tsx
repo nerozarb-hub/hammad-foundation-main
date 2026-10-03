@@ -7,7 +7,16 @@ import { ArrowRight, Check, Copy } from "lucide-react";
 import { supportOptions, paymentDisclosure } from "@/config/ecosystem";
 
 const amountText = (amount: number) => `PKR ${amount.toLocaleString()}`;
-const newCheckoutKey = () => crypto.randomUUID();
+const newCheckoutKey = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
 
 function DonateContent() {
   const params = useSearchParams();
@@ -36,12 +45,31 @@ function DonateContent() {
     if (phone.trim() && !/^\+?[0-9]{7,16}$/.test(phone.trim().replace(/[\s\-()]/g, ""))) { setFieldError("phone"); setError("Enter a valid phone number or leave it blank."); return; }
     setFieldError(""); setError(""); setLoading(true);
     try {
-      const response = await fetch("/api/paypro/create-order", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": key }, body: JSON.stringify({ amount, donorName: name.trim(), donorEmail: email.trim() || undefined, donorPhone: phone.trim() || undefined, supportOptionId: selected }) });
+      const response = await fetch("/api/paypro/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Idempotency-Key": key },
+        body: JSON.stringify({
+          amount,
+          donorName: name.trim(),
+          donorEmail: email.trim() || undefined,
+          donorPhone: phone.trim() || undefined,
+          supportOptionId: selected,
+        }),
+      });
       const result = await response.json();
-      if (!response.ok || !result.success || !result.click2PayUrl) { setError(result.error || "Payment could not be started. Please try again."); return; }
-      window.location.assign(result.click2PayUrl);
-    } catch { setError("The payment service could not be reached. Please try again later."); }
-    finally { setLoading(false); }
+      const checkoutUrl = result.click2PayUrl || result.checkoutUrl;
+      if (!response.ok || !result.success || !checkoutUrl) {
+        setKey(newCheckoutKey());
+        setError(result.error || "Payment could not be started. Please try again.");
+        return;
+      }
+      window.location.assign(checkoutUrl);
+    } catch {
+      setKey(newCheckoutKey());
+      setError("The payment service could not be reached. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function copyBank() {

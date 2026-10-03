@@ -54,7 +54,10 @@ export function createPaymentHandlers(deps: Dependencies = defaults) {
         if (!await repo.claimGatewayAttempt(record.orderNumber)) return json({ success: false, error: 'This checkout is processing or requires reconciliation. Please contact support before starting another payment.' }, 409, headers);
         // Never retry automatically after this durable claim, including timeouts
         // and successful gateway responses followed by a failed database write.
-        const result = await deps.gateway(config).createOrder({ ...input, orderNumber: record.orderNumber });
+        const origin = req.headers.get('origin');
+        const returnBase = origin || config.appUrl;
+        const returnUrl = new URL('/donation/return', returnBase).toString();
+        const result = await deps.gateway(config).createOrder({ ...input, orderNumber: record.orderNumber, returnUrl });
         if (result.orderNumber !== record.orderNumber) throw new Error('Gateway order mismatch');
         const stored = await repo.attachPayProId(record.orderNumber, result.payProId, result.click2PayUrl, result.billUrl);
         return json({ success: true, orderNumber: stored.orderNumber, payProId: stored.payProId, click2PayUrl: stored.click2PayUrl }, 200, headers);

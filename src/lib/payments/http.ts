@@ -26,7 +26,11 @@ export async function readJson(req: Request): Promise<Record<string, unknown>> {
   return value as Record<string, unknown>;
 }
 export function sameOrigin(req: Request, appUrl: string) {
-  return req.headers.get('origin') === new URL(appUrl).origin && req.headers.get('sec-fetch-site') !== 'cross-site';
+  const origin = req.headers.get('origin');
+  if (!origin || req.headers.get('sec-fetch-site') === 'cross-site') return false;
+  const requestOrigin = new URL(req.url).origin;
+  const canonicalOrigin = new URL(appUrl).origin;
+  return origin === requestOrigin || origin === canonicalOrigin;
 }
 export function cookieName(orderNumber: string) { return `hf_receipt_${orderNumber}`; }
 export function cookieValue(req: Request, orderNumber: string) {
