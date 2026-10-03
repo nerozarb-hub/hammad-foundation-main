@@ -1,31 +1,9 @@
 import type { Metadata } from "next";
-import { ContactSection } from "@/components/landing/ContactSection";
-import { MapPin, Phone, Mail, Clock, MessageCircle, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ExternalLink, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { siteUrls } from "@/config/ecosystem";
+import { Motif } from "@/components/illustrations/Motif";
 
-export const metadata: Metadata = {
-  title: "Contact & Visit Us | Hammad Foundation Lahore",
-  description: "Contact Sir Ali Choudhary or visit Hammad Foundation Girls High School on Barki Road, Lahore. Phone, WhatsApp, email, and location.",
-  alternates: { canonical: "/contact" },
-};
-
-export default function ContactPage() {
-  return (
-    <div className="min-h-screen bg-brand-gray-50/50 py-16 md:py-24">
-      <div className="container max-w-5xl">
-        <div className="mb-12">
-          <span className="text-xs font-black uppercase tracking-[0.25em] text-brand-nero bg-brand-nero/10 px-3.5 py-1.5 rounded-full">
-            Direct Communication
-          </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-[900] text-brand-charcoal tracking-tight mt-4 mb-6 leading-tight">
-            Contact &amp; Visit Campus
-          </h1>
-          <p className="text-lg md:text-xl text-brand-charcoal/70 leading-relaxed font-medium max-w-2xl">
-            We operate with complete open doors. Reach out directly to leadership or visit our high school on Barki Road, Lahore.
-          </p>
-        </div>
-
-        <ContactSection />
-      </div>
-    </div>
-  );
-}
+export const metadata: Metadata = { title: "Contact & Visit Us | Hammad Foundation Lahore", description: "Contact the Hammad Foundation school team in Lahore.", alternates: { canonical: "/contact" } };
+const contacts = [[Phone, "Call the school team", "+92 300 8099015", "tel:+923008099015"], [Mail, "Email the school team", "info@hammadfoundation.edu.pk", "mailto:info@hammadfoundation.edu.pk"], [MapPin, "Campus location", "Opposite Garrison Shooting Gallery, Barki Road, Lahore, Pakistan", "https://maps.google.com/?q=Hammad+Foundation+School+Barki+Road+Lahore"]] as const;
+export default function ContactPage() { return <div className="bg-white"><section className="bg-brand-gray-50 py-14 md:py-20"><div className="container grid gap-7 lg:grid-cols-[1fr_.8fr] lg:items-end"><div><p className="eyebrow">Contact and visits</p><h1 className="mt-4 max-w-[12ch]">Let’s talk about the school.</h1></div><p className="max-w-[55ch] text-lg body-muted">Contact the team for current school and visit arrangements. For support payments and transaction questions, use the YZ Educational Services website with your order reference.</p></div></section><section className="container grid gap-10 py-16 lg:grid-cols-[.7fr_1fr] md:py-24"><div><Motif kind="questions" size={78} /><p className="eyebrow mt-6">School and campus</p><h2 className="mt-4 max-w-[14ch]">Reach the school team.</h2><p className="mt-4 max-w-[45ch] text-base body-muted">For current school information or a visit, contact the team in advance.</p></div><div className="divide-y divide-brand-charcoal/15 border-y border-brand-charcoal/15">{contacts.map(([Icon, label, value, href]) => <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noopener noreferrer" : undefined} className="group grid min-h-24 gap-3 py-5 hover:bg-brand-gray-50 sm:grid-cols-[3rem_1fr_auto] sm:items-center sm:px-4"><Icon size={24} className="text-brand-nero" /><span><strong className="block text-lg">{label}</strong><span className="mt-1 block break-words text-base body-muted">{value}</span></span>{href.startsWith("http") ? <ExternalLink size={18} className="text-brand-nero" /> : <ArrowRight size={18} className="text-brand-nero" />}</a>)}</div></section><section className="bg-[#E9F8ED] py-14 md:py-20"><div className="container grid gap-8 lg:grid-cols-2"><div><p className="eyebrow">Before you visit</p><h2 className="mt-4 max-w-[18ch]">Please arrange campus access in advance.</h2><p className="mt-4 max-w-[52ch] text-base body-muted">The team can confirm current hours, visitor access, and safeguarding arrangements before you travel.</p><a href="https://wa.me/923008099015?text=Hello%20Hammad%20Foundation%2C%20I%20would%20like%20to%20arrange%20a%20campus%20visit." target="_blank" rel="noopener noreferrer" className="btn-brand mt-6"><MessageCircle size={18} /> Message on WhatsApp</a></div><div className="rounded-2xl bg-white p-7 sm:p-9"><p className="eyebrow">Payment questions</p><h3 className="mt-4 text-2xl">Your order reference helps us find your payment.</h3><p className="mt-4 text-base body-muted">Payments are received by YZ Educational Services and designated for Hammad Foundation. Use the YZ website to find current contact information for transaction questions.</p><a href={siteUrls.yz} target="_blank" rel="noopener noreferrer" className="link-arrow mt-6">Visit YZ Educational Services <ExternalLink size={17} /></a><p className="mt-5 text-sm body-muted">You can also <Link href="/transparency" className="font-bold text-brand-nero  ">review the payment relationship</Link> here.</p></div></div></section></div>; }

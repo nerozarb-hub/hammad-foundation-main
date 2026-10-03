@@ -1,114 +1,48 @@
+import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, ShieldCheck, MapPin, Phone, Mail } from "lucide-react";
+import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+
+const explore = [
+  ["Our school", "/our-school"], ["Our story", "/our-story"],
+  ["School gallery", "/gallery"], ["Support options", "/guardian-programme"],
+] as const;
+const information = [
+  ["Transparency", "/transparency"], ["How support works", "/how-we-are-structured"],
+  ["Updates", "/updates"], ["Questions", "/#faq"],
+] as const;
 
 export function Footer() {
   return (
-    <footer className="bg-brand-charcoal text-white pt-16 pb-12 border-t border-white/10">
-      <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-14">
-          {/* Col 1: Identity & Legal Purpose */}
-          <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="inline-block">
-              <span className="text-xl font-[900] tracking-tight text-white">
-                HAMMAD <span className="text-brand-nero">FOUNDATION</span>
-              </span>
+    <footer className="site-footer theme-dark bg-brand-charcoal text-white" aria-label="Site footer">
+      <div className="container py-14 md:py-20">
+        <div className="grid gap-10 border-b border-white/20 pb-12 lg:grid-cols-[1.35fr_.7fr_.8fr_1.1fr] lg:gap-8">
+          <div>
+            <Link href="/" className="inline-flex items-center gap-3 rounded-lg" aria-label="Hammad Foundation home">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white"><Image src="/images/hammad/logo-mark.webp" alt="" width={160} height={164} className="h-12 w-12 object-contain" /></span>
+              <span className="font-display text-xl font-extrabold tracking-[-.04em] text-white">Hammad Foundation</span>
             </Link>
-            <p className="text-white/70 text-xs leading-relaxed font-medium">
-              Hammad Foundation is a named school project of YZ Educational Services (Private) Limited. Serving underprivileged girls in Lahore with 100% transparent, direct student sponsorship.
-            </p>
-            <div className="pt-2 flex items-center gap-2 text-xs text-brand-nero font-bold">
-              <ShieldCheck size={16} />
-              <span>SECP CUIN 0326364 · Verified Educational Entity</span>
-            </div>
+            <p className="mt-5 max-w-[38ch] text-base leading-relaxed text-white/90">Helping people access education, with a school community in Lahore at the heart of the work.</p>
+            <Link href="/donate" className="btn-brand mt-6">Support education <ArrowRight size={17} aria-hidden="true" /></Link>
           </div>
-
-          {/* Col 2: Navigation */}
-          <div className="lg:col-span-3">
-            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-nero mb-4">
-              Explore
-            </h4>
-            <ul className="space-y-2.5 text-xs text-white/75 font-medium">
-              <li>
-                <Link href="/#impact" className="hover:text-white transition-colors">
-                  Sponsorship Packages
-                </Link>
-              </li>
-              <li>
-                <Link href="/our-school" className="hover:text-white transition-colors">
-                  Our School Campus
-                </Link>
-              </li>
-              <li>
-                <Link href="/our-story" className="hover:text-white transition-colors">
-                  Our Story
-                </Link>
-              </li>
-              <li>
-                <Link href="/how-we-are-structured" className="hover:text-white transition-colors">
-                  How Support Works
-                </Link>
-              </li>
-              <li>
-                <Link href="/transparency" className="hover:text-white transition-colors">
-                  Transparency &amp; Records
-                </Link>
-              </li>
-              <li>
-                <Link href="/#faq" className="hover:text-white transition-colors">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Campus Details */}
-          <div className="lg:col-span-5 space-y-3">
-            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-nero mb-4">
-              Campus &amp; Director Hotline
-            </h4>
-            <div className="space-y-2 text-xs text-white/75">
-              <p className="flex items-start gap-2">
-                <MapPin size={15} className="text-brand-nero shrink-0 mt-0.5" />
-                <span>Opposite Garrison Shooting Gallery, Barki Road, Lahore, Pakistan</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone size={15} className="text-brand-nero shrink-0" />
-                <a href="tel:+923008099015" className="hover:underline font-bold text-white">
-                  +92 300 8099015 (Director Sir Ali Choudhary)
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <Mail size={15} className="text-brand-nero shrink-0" />
-                <a href="mailto:info@hammadfoundation.edu.pk" className="hover:underline">
-                  info@hammadfoundation.edu.pk
-                </a>
-              </p>
-            </div>
-
-            <div className="pt-3">
-              <a
-                href="https://wa.me/923008099015?text=Salaam%20Sir%20Ali!%20I%20have%20a%20question%20about%20the%20school%20project."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-brand-nero hover:bg-brand-nero/90 text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl shadow transition-colors"
-              >
-                <MessageCircle size={15} />
-                <span>Text Director on WhatsApp</span>
-              </a>
-            </div>
+          <nav aria-label="Explore">
+            <h2 className="text-base font-bold text-white">Explore</h2>
+            <ul className="mt-3 -ml-2 space-y-1">{explore.map(([label, href]) => <li key={href}><Link className="footer-link" href={href}>{label}</Link></li>)}</ul>
+          </nav>
+          <nav aria-label="Information">
+            <h2 className="text-base font-bold text-white">Information</h2>
+            <ul className="mt-3 -ml-2 space-y-1">{information.map(([label, href]) => <li key={href}><Link className="footer-link" href={href}>{label}</Link></li>)}</ul>
+          </nav>
+          <div>
+            <h2 className="text-base font-bold text-white">Talk to the team</h2>
+            <p className="mt-5 flex items-start gap-3 text-base text-white/90"><MapPin size={19} className="mt-1 shrink-0 text-[#78e3a3]" aria-hidden="true" />Barki Road, Lahore, Pakistan</p>
+            <p className="mt-4 flex items-center gap-3 text-base text-white/90"><Phone size={19} className="shrink-0 text-[#78e3a3]" aria-hidden="true" /><a href="tel:+923008099015">+92 300 8099015</a></p>
+            <p className="mt-4 flex items-start gap-3 text-base text-white/90"><Mail size={19} className="mt-1 shrink-0 text-[#78e3a3]" aria-hidden="true" /><a href="mailto:info@hammadfoundation.edu.pk" className="break-all">info@hammadfoundation.edu.pk</a></p>
+            <Link href="/contact" className="btn-outline mt-6">Contact us <ArrowRight size={17} aria-hidden="true" /></Link>
           </div>
         </div>
-
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/50">
-          <p>
-            &copy; {new Date().getFullYear()} Hammad Foundation. A project of YZ Educational Services (Private) Limited. All rights reserved.
-          </p>
-          <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="/refunds" className="hover:text-white transition-colors">Refund Policy</Link>
-            <Link href="/admin/login" className="hover:text-white transition-colors">Admin</Link>
-          </div>
+        <div className="flex flex-col gap-4 pt-7 text-sm text-white/85 md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Hammad Foundation. The Lahore school project is part of YZ Educational Services (Private) Limited, which receives payments.</p>
+          <nav aria-label="Policies" className="-ml-2 flex flex-wrap gap-x-2 gap-y-1"><Link className="footer-link" href="/privacy">Privacy</Link><Link className="footer-link" href="/terms">Terms</Link><Link className="footer-link" href="/refunds">Refund policy</Link></nav>
         </div>
       </div>
     </footer>

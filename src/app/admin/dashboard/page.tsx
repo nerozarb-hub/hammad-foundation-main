@@ -13,11 +13,8 @@ import {
   XCircle,
   Copy,
   Check,
-  Building2,
   TrendingUp,
   CreditCard,
-  AlertTriangle,
-  ChevronRight,
   ShieldCheck,
 } from "lucide-react";
 
@@ -166,10 +163,10 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-3">
             <Link href="/" className="hover:opacity-90 transition-opacity">
               <span className="text-lg font-[900] tracking-tight">
-                HAMMAD <span className="text-brand-nero">FOUNDATION</span>
+                HAMMAD <span className="text-[#62D993]">FOUNDATION</span>
               </span>
             </Link>
-            <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-wider text-brand-nero">
+            <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-wider text-[#62D993]">
               Operations
             </span>
           </div>
@@ -186,7 +183,7 @@ export default function AdminDashboardPage() {
               className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Refresh Data"
             >
-              <RefreshCw size={16} className={refreshing ? "animate-spin text-brand-nero" : ""} />
+              <RefreshCw size={16} className={refreshing ? "animate-spin text-[#62D993]" : ""} />
             </button>
 
             <button
@@ -237,12 +234,12 @@ export default function AdminDashboardPage() {
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-[900] tracking-tight">Website Payments &amp; Donations</h1>
-            <p className="mt-1 text-sm text-white/60">
+            <p className="mt-1 text-sm text-white/85">
               Live audit trail of all donor transactions, PayPro IDs, settlement statuses, and gateway reconciliation.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-white/50">
-            <ShieldCheck size={16} className="text-brand-nero" />
+          <div className="flex items-center gap-2 text-xs text-white/85">
+            <ShieldCheck size={16} className="text-[#62D993]" />
             <span>PostgreSQL Pooler Direct</span>
           </div>
         </div>
@@ -251,7 +248,7 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-[#151920] border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden">
             <div className="flex justify-between items-start mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-white/50">Settled Total</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white/85">Settled Total</span>
               <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
                 <TrendingUp size={16} />
               </div>
@@ -259,25 +256,25 @@ export default function AdminDashboardPage() {
             <p className="text-2xl font-[900] text-emerald-400">
               PKR {(stats?.totalAmountPaid || 0).toLocaleString()}
             </p>
-            <p className="text-xs text-white/40 mt-1">Confirmed with PayPro GGOS</p>
+            <p className="text-xs text-white/85 mt-1">Confirmed with PayPro GGOS</p>
           </div>
 
           <div className="bg-[#151920] border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden">
             <div className="flex justify-between items-start mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-white/50">Paid Orders</span>
-              <div className="w-8 h-8 rounded-xl bg-brand-nero/15 text-brand-nero flex items-center justify-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white/85">Paid Orders</span>
+              <div className="w-8 h-8 rounded-xl bg-brand-nero/15 text-[#62D993] flex items-center justify-center">
                 <CheckCircle2 size={16} />
               </div>
             </div>
             <p className="text-2xl font-[900] text-white">
               {stats?.paidCount || 0}
             </p>
-            <p className="text-xs text-white/40 mt-1">Settled donations</p>
+            <p className="text-xs text-white/85 mt-1">Settled donations</p>
           </div>
 
           <div className="bg-[#151920] border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden">
             <div className="flex justify-between items-start mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-white/50">Pending / In-Flight</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white/85">Pending / In-Flight</span>
               <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
                 <Clock size={16} />
               </div>
@@ -285,33 +282,33 @@ export default function AdminDashboardPage() {
             <p className="text-2xl font-[900] text-amber-400">
               {stats?.pendingCount || 0}
             </p>
-            <p className="text-xs text-white/40 mt-1">Awaiting checkout completion</p>
+            <p className="text-xs text-white/85 mt-1">Awaiting checkout completion</p>
           </div>
 
           <div className="bg-[#151920] border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden">
             <div className="flex justify-between items-start mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-white/50">Total Checkouts</span>
-              <div className="w-8 h-8 rounded-xl bg-white/5 text-white/70 flex items-center justify-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white/85">Total Checkouts</span>
+              <div className="w-8 h-8 rounded-xl bg-white/5 text-white/85 flex items-center justify-center">
                 <CreditCard size={16} />
               </div>
             </div>
             <p className="text-2xl font-[900] text-white">
               {stats?.totalCount || 0}
             </p>
-            <p className="text-xs text-white/40 mt-1">Total created intentions</p>
+            <p className="text-xs text-white/85 mt-1">Total created intentions</p>
           </div>
         </div>
 
         {/* Filter / Search Bar */}
         <div className="bg-[#151920] border border-white/10 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="relative w-full sm:w-80">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/85" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search donor, order, PayPro ID..."
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-medium text-white placeholder-white/40 outline-none focus:border-brand-nero"
+              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-medium text-white placeholder-white/70 outline-none focus:border-brand-nero"
             />
           </div>
 
@@ -323,7 +320,7 @@ export default function AdminDashboardPage() {
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   statusFilter === status
                     ? "bg-brand-nero text-white"
-                    : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10"
+                    : "bg-white/5 text-white/85 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {status}
@@ -335,19 +332,19 @@ export default function AdminDashboardPage() {
         {/* Transactions Table */}
         <div className="bg-[#151920] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
           {loading ? (
-            <div className="py-20 text-center text-white/50 text-sm">
-              <RefreshCw size={28} className="animate-spin text-brand-nero mx-auto mb-3" />
+            <div className="py-20 text-center text-white/85 text-sm">
+              <RefreshCw size={28} className="animate-spin text-[#62D993] mx-auto mb-3" />
               Loading donation records from Supabase...
             </div>
           ) : filteredDonations.length === 0 ? (
-            <div className="py-20 text-center text-white/50 text-sm">
+            <div className="py-20 text-center text-white/85 text-sm">
               No transactions match your search or filter.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-white/10 bg-white/[0.02] text-white/50 uppercase tracking-wider font-bold">
+                  <tr className="border-b border-white/10 bg-white/[0.02] text-white/85 uppercase tracking-wider font-bold">
                     <th className="py-3.5 px-4">Date</th>
                     <th className="py-3.5 px-4">Order / PayPro ID</th>
                     <th className="py-3.5 px-4">Donor Information</th>
@@ -360,12 +357,11 @@ export default function AdminDashboardPage() {
                   {filteredDonations.map((d) => {
                     const isPaid = d.status === "paid";
                     const isPending = d.status === "pending";
-                    const isFailed = d.status === "failed" || d.status === "expired";
 
                     return (
                       <tr key={d.id} className="hover:bg-white/[0.02] transition-colors">
                         {/* Date */}
-                        <td className="py-4 px-4 whitespace-nowrap text-white/70">
+                        <td className="py-4 px-4 whitespace-nowrap text-white/85">
                           <p className="font-semibold text-white">
                             {new Date(d.createdAt).toLocaleDateString("en-GB", {
                               day: "2-digit",
@@ -373,7 +369,7 @@ export default function AdminDashboardPage() {
                               year: "numeric",
                             })}
                           </p>
-                          <p className="text-[10px] text-white/40">
+                          <p className="text-[10px] text-white/85">
                             {new Date(d.createdAt).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -398,7 +394,7 @@ export default function AdminDashboardPage() {
                             </button>
                           </div>
                           {d.payProId ? (
-                            <div className="flex items-center gap-1 text-[11px] text-brand-nero font-semibold mt-0.5">
+                            <div className="flex items-center gap-1 text-[11px] text-[#62D993] font-semibold mt-0.5">
                               <span>ID: {d.payProId}</span>
                               <button
                                 onClick={() => handleCopy(d.payProId!, `paypro-${d.id}`)}
@@ -420,8 +416,8 @@ export default function AdminDashboardPage() {
                         {/* Donor */}
                         <td className="py-4 px-4">
                           <p className="font-bold text-white">{d.donorName}</p>
-                          <p className="text-white/60 text-[11px]">{d.donorEmail || "No email"}</p>
-                          <p className="text-white/40 text-[10px]">{d.donorPhone || "No phone"}</p>
+                          <p className="text-white/85 text-[11px]">{d.donorEmail || "No email"}</p>
+                          <p className="text-white/85 text-[10px]">{d.donorPhone || "No phone"}</p>
                         </td>
 
                         {/* Amount */}
@@ -429,7 +425,7 @@ export default function AdminDashboardPage() {
                           <p className="text-sm font-black text-white">
                             PKR {d.amount.toLocaleString()}
                           </p>
-                          <p className="text-[10px] text-white/40 uppercase tracking-wider">{d.supportOptionId}</p>
+                          <p className="text-[10px] text-white/85 uppercase tracking-wider">{d.supportOptionId}</p>
                         </td>
 
                         {/* Status Badge */}
@@ -460,7 +456,7 @@ export default function AdminDashboardPage() {
                                 href={d.click2PayUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/85 hover:text-white transition-colors"
                                 title="Open PayPro Checkout Page"
                               >
                                 <ExternalLink size={14} />
@@ -471,7 +467,7 @@ export default function AdminDashboardPage() {
                               <button
                                 onClick={() => handleVerify(d.orderNumber)}
                                 disabled={verifyingOrder === d.orderNumber}
-                                className="px-2.5 py-1 rounded-lg bg-brand-nero/15 hover:bg-brand-nero/25 text-brand-nero font-bold text-[10px] uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
+                                className="px-2.5 py-1 rounded-lg bg-brand-nero/15 hover:bg-brand-nero/25 text-[#62D993] font-bold text-[10px] uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
                                 title="Check latest settlement status with PayPro GGOS"
                               >
                                 {verifyingOrder === d.orderNumber ? "Checking..." : "Verify GGOS"}

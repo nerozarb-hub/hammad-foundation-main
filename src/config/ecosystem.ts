@@ -10,7 +10,7 @@ export const contact = {
   location: "Barki Road, Lahore, Pakistan",
 } as const;
 
-export const relationshipDisclosure = "Hammad Foundation is a school project of YZ Educational Services.";
+export const relationshipDisclosure = "Hammad Foundation helps people access education. Its Lahore school project is part of YZ Educational Services.";
 export const paymentDisclosure = {
   recipient: "Y.Z Educational Services (Private) Limited",
   recipientPublicName: "YZ Educational Services",

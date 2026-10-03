@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertCircle, ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 interface RealityCheckProps {
     onSelectPlan?: (planId: string) => void;
@@ -37,7 +36,7 @@ export function RealityCheck({ onSelectPlan }: RealityCheckProps) {
                             <p>If you close this tab and forget about it:</p>
                             <p className="text-white text-xl font-bold">
                                 A 10-year-old in Lahore{" "}
-                                <span className="font-black underline decoration-brand-red decoration-4 underline-offset-4">
+                                <span className="font-black  decoration-brand-red decoration-4 ">
                                     drops out permanently next term.
                                 </span>
                             </p>

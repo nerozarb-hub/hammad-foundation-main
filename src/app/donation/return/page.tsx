@@ -61,11 +61,11 @@ function ReturnContent() {
 
   return (
     <div className="min-h-screen bg-brand-sand px-4 py-16 md:py-24 selection:bg-brand-nero selection:text-white">
-      <div className="mx-auto max-w-2xl rounded-3xl border border-brand-charcoal/10 bg-white p-8 sm:p-12 text-center shadow-2xl">
+      <div className="mx-auto max-w-2xl border border-brand-charcoal/10 bg-white p-8 sm:p-12 text-center shadow-elevated">
         {loading ? (
           <Loader2 className="mx-auto animate-spin text-brand-nero" size={56} />
         ) : paid ? (
-          <div className="w-20 h-20 rounded-full bg-emerald-500/15 text-brand-nero flex items-center justify-center mx-auto mb-2">
+          <div className="w-20 h-20 bg-brand-nero/10 text-brand-nero flex items-center justify-center mx-auto mb-2">
             <CheckCircle2 size={48} className="stroke-[2.5]" />
           </div>
         ) : failed ? (
@@ -78,7 +78,7 @@ function ReturnContent() {
           </div>
         )}
 
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-nero/10 text-brand-nero text-[11px] font-black uppercase tracking-wider mt-4">
+        <div className="inline-flex items-center gap-1.5 py-1 text-brand-nero text-[11px] font-black uppercase tracking-wider mt-4">
           <ShieldCheck size={14} />
           {paid ? "Official Contribution Confirmed" : "PayPro Gateway Verification"}
         </div>
@@ -87,17 +87,17 @@ function ReturnContent() {
           {loading
             ? "Verifying Payment with PayPro..."
             : paid
-            ? "Thank You! A Child's Future is Protected."
+            ? "Your payment has been confirmed"
             : failed
             ? "Payment Was Not Completed"
             : "Payment Processing / Awaiting Settlement"}
         </h1>
 
-        <p className="mx-auto mt-4 max-w-lg text-sm sm:text-base leading-relaxed text-brand-charcoal/70 font-medium">
+        <p className="mx-auto mt-4 max-w-lg text-sm sm:text-base leading-relaxed text-secondary font-medium">
           {loading
             ? "Connecting directly to PayPro settlement clearing network to verify your transaction."
             : paid
-            ? "Your contribution has been settled and credited directly to Hammad Foundation School in Barki Road, Lahore. You will receive your official student match and field updates."
+            ? "Your contribution has been settled and recorded for the Hammad Foundation project. Keep your order reference for any follow-up."
             : result?.message ||
               result?.error ||
               "If you have already paid, your bank may take a few minutes to notify PayPro."}
@@ -106,7 +106,7 @@ function ReturnContent() {
         {result?.orderNumber && (
           <div className="mt-8 space-y-3 rounded-2xl border border-brand-charcoal/10 bg-brand-gray-50/80 p-6 text-left text-sm">
             <div className="flex justify-between gap-4 border-b border-brand-charcoal/10 pb-3">
-              <span className="text-brand-charcoal/60 font-semibold text-xs uppercase tracking-wider">
+              <span className="text-secondary font-semibold text-xs uppercase tracking-wider">
                 Order Reference
               </span>
               <span className="font-mono font-bold text-brand-charcoal">{result.orderNumber}</span>
@@ -114,7 +114,7 @@ function ReturnContent() {
 
             {result.payProId && (
               <div className="flex justify-between gap-4 border-b border-brand-charcoal/10 pb-3">
-                <span className="text-brand-charcoal/60 font-semibold text-xs uppercase tracking-wider">
+                <span className="text-secondary font-semibold text-xs uppercase tracking-wider">
                   PayPro ID
                 </span>
                 <span className="font-mono font-bold text-brand-nero">{result.payProId}</span>
@@ -123,7 +123,7 @@ function ReturnContent() {
 
             {result.amount && (
               <div className="flex justify-between gap-4 pt-1">
-                <span className="text-brand-charcoal/60 font-semibold text-xs uppercase tracking-wider">
+                <span className="text-secondary font-semibold text-xs uppercase tracking-wider">
                   Amount
                 </span>
                 <span className="font-black text-brand-charcoal text-base">
@@ -135,23 +135,23 @@ function ReturnContent() {
         )}
 
         {paid && (
-          <div className="mt-6 p-5 rounded-2xl bg-brand-nero/10 border border-brand-nero/20 text-left">
+          <div className="mt-6 p-5 bg-brand-nero/10 border border-brand-nero/20 text-left">
             <div className="flex items-center gap-2 text-brand-nero font-black text-xs uppercase tracking-wider mb-2">
               <Heart size={15} className="fill-current" />
-              <span>Next Step: Your Student Welcome Packet</span>
+              <span>Next step</span>
             </div>
-            <p className="text-xs text-brand-charcoal/80 leading-relaxed font-medium">
-              Send your payment confirmation to Director Sir Ali Choudhary on WhatsApp. He will manually assign your student, send their photo &amp; bio, and add you to the Friday classroom video update list.
+            <p className="text-xs text-secondary leading-relaxed font-medium">
+              If you have a question about your contribution, contact the school team with the order reference shown above.
             </p>
             <div className="mt-4">
               <a
                 href={`https://wa.me/923008099015?text=Salaam%20Sir%20Ali!%20I%20have%20completed%20my%20donation%20(Order:%20${result?.orderNumber || ""}).%20Please%20share%20my%20student%20details.`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-brand-nero text-white text-xs font-black uppercase tracking-wider shadow hover:bg-brand-nero/90 transition-colors"
+                className="btn-brand w-full text-xs uppercase tracking-wider"
               >
                 <MessageCircle size={16} />
-                <span>Message Sir Ali Choudhary on WhatsApp</span>
+                <span>Contact the school team on WhatsApp</span>
               </a>
             </div>
           </div>
@@ -160,14 +160,14 @@ function ReturnContent() {
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-charcoal px-6 py-3.5 font-black text-xs uppercase tracking-wider text-white hover:bg-brand-charcoal/90 transition-colors"
+            className="btn-ink px-6 text-xs uppercase tracking-wider"
           >
             Back to School Home <ArrowRight size={15} />
           </Link>
           {!paid && (
             <Link
               href="/donate"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-charcoal/20 px-6 py-3.5 font-bold text-xs uppercase tracking-wider text-brand-charcoal hover:bg-brand-gray-50 transition-colors"
+              className="inline-flex min-h-11 items-center justify-center gap-2 border border-brand-charcoal/20 px-6 text-xs font-bold uppercase tracking-wider text-brand-charcoal hover:bg-brand-gray-50 transition-colors"
             >
               Try Again
             </Link>

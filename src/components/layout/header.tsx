@@ -1,121 +1,59 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X, ShieldCheck, ArrowRight, Heart } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Menu, X } from "lucide-react";
 
-const navLinks = [
-  { name: "School & Impact", href: "/#impact" },
+const links = [
+  { name: "Our School", href: "/our-school" },
   { name: "Our Story", href: "/our-story" },
-  { name: "How Support Works", href: "/#how-it-works" },
   { name: "Transparency", href: "/transparency" },
-  { name: "FAQ", href: "/#faq" },
   { name: "Contact", href: "/contact" },
 ];
 
 export function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    menuRef.current?.querySelector<HTMLElement>("a")?.focus();
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") { setOpen(false); toggleRef.current?.focus(); }
+      if (event.key !== "Tab" || !menuRef.current) return;
+      const focusable = [toggleRef.current, ...menuRef.current.querySelectorAll<HTMLElement>("a")].filter(Boolean) as HTMLElement[];
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   return (
-    <>
-      {/* Slim Top Bar: Single clean, compact trust indicator */}
-      <div className="bg-brand-charcoal text-white text-[11px] font-medium py-2 px-4 border-b border-white/10">
-        <div className="container flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-brand-nero shrink-0" />
-            <span className="truncate">
-              Support received by <strong className="font-bold text-white">YZ Educational Services</strong> · Designated for <strong className="font-bold text-white">Hammad Foundation</strong>
-            </span>
-          </div>
-          <div className="hidden sm:flex items-center gap-4 text-white/60">
-            <span>SECP CUIN 0326364</span>
-            <span>Barki Road, Lahore</span>
-          </div>
+    <header className="sticky top-0 z-50 border-b border-brand-charcoal/10 bg-white/95 backdrop-blur-md">
+      <div className="container flex min-h-[78px] items-center justify-between gap-4">
+        <Link href="/" onClick={() => setOpen(false)} className="flex min-w-0 items-center gap-3" aria-label="Hammad Foundation home">
+          <Image src="/images/hammad/logo-mark.webp" alt="" width={160} height={164} className="h-[50px] w-[49px] shrink-0 object-contain" />
+          <span className="min-w-0 font-display text-[15px] font-extrabold leading-tight tracking-[-.045em] text-brand-charcoal sm:text-lg">Hammad Foundation<span className="block font-sans text-xs font-semibold tracking-normal text-brand-gray-500">Education access · Lahore</span></span>
+        </Link>
+        <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
+          {links.map(link => <Link key={link.href} href={link.href} aria-current={pathname === link.href ? "page" : undefined} className={`inline-flex min-h-11 items-center rounded-lg px-3 text-base text-brand-charcoal hover:bg-brand-gray-100 hover:text-brand-nero ${pathname === link.href ? "bg-brand-gray-100 font-bold text-brand-nero" : ""}`}>{link.name}</Link>)}
+        </nav>
+        <div className="flex items-center gap-2">
+          <Link href="/donate" className="btn-brand hidden whitespace-nowrap sm:inline-flex">Support education</Link>
+          <button ref={toggleRef} type="button" onClick={() => setOpen(value => !value)} aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-brand-charcoal/20 lg:hidden">{open ? <X size={21} /> : <Menu size={21} />}</button>
         </div>
       </div>
-
-      {/* Main Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-brand-charcoal/10 bg-white/95 backdrop-blur-md shadow-sm">
-        <div className="container flex min-h-18 items-center justify-between gap-4 py-3">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-brand-nero text-white flex items-center justify-center font-[900] text-lg shadow-md group-hover:scale-105 transition-transform">
-              H
-            </div>
-            <div>
-              <span className="block text-lg sm:text-xl font-[900] tracking-tight text-brand-charcoal leading-none">
-                HAMMAD <span className="text-brand-nero">FOUNDATION</span>
-              </span>
-              <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-brand-charcoal/50 mt-1">
-                Girls High School · Lahore
-              </span>
-            </div>
-          </Link>
-
-          {/* Short, Purposeful Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-black uppercase tracking-[0.1em] text-brand-charcoal/70" aria-label="Main navigation">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="hover:text-brand-nero transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Persistent High-Contrast Primary CTA */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/donate"
-              className="btn-brand min-h-11 h-11 px-5 sm:px-6 text-xs sm:text-sm font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg flex items-center gap-2 shrink-0"
-            >
-              <span>Support School</span>
-              <ArrowRight size={15} />
-            </Link>
-
-            {/* Mobile Hamburger */}
-            <button
-              type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-xl text-brand-charcoal hover:bg-brand-gray-50 border border-brand-charcoal/10"
-              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
-              aria-expanded={mobileOpen}
-            >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation Drawer */}
-        {mobileOpen && (
-          <div className="lg:hidden bg-white border-t border-brand-charcoal/10 px-6 py-5 shadow-xl space-y-3">
-            <nav className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="py-3 px-3 rounded-xl text-sm font-bold text-brand-charcoal hover:bg-brand-gray-50 transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-            <div className="pt-3 border-t border-brand-charcoal/10">
-              <Link
-                href="/donate"
-                onClick={() => setMobileOpen(false)}
-                className="btn-brand w-full h-12 rounded-xl text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2"
-              >
-                <span>Donate / Support Now</span>
-                <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        )}
-      </header>
-    </>
+      {open && <div ref={menuRef} id="mobile-navigation" className="max-h-[calc(100dvh-78px)] overflow-y-auto border-t border-brand-charcoal/10 bg-white px-5 py-5 lg:hidden"><nav className="container flex flex-col px-0" aria-label="Mobile navigation">
+        {links.map(link => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} aria-current={pathname === link.href ? "page" : undefined} className="flex min-h-12 items-center border-b border-brand-charcoal/10 text-lg font-semibold">{link.name}</Link>)}
+        <Link href="/donate" onClick={() => setOpen(false)} className="btn-brand mt-5">Support education</Link>
+        <Link href="/transparency" onClick={() => setOpen(false)} className="btn-outline mt-4 w-full">How payments are received <ArrowRight size={17} aria-hidden="true" /></Link>
+      </nav></div>}
+    </header>
   );
 }

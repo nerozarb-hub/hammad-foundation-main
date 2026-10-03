@@ -39,7 +39,7 @@ export function ContactSection() {
                                     href="https://maps.google.com/?q=Hammad+Foundation+School+Barki+Road+Lahore"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-nero hover:underline mt-2"
+                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-nero  mt-2"
                                 >
                                     Open in Google Maps <ExternalLink size={13} />
                                 </a>

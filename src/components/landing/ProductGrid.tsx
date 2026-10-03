@@ -1,253 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Crown, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
-import { PaymentModal } from "@/components/modals/PaymentModal";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { supportOptions } from "@/config/ecosystem";
 
 interface ProductGridProps {
-    onSelectPlan?: (planId: string) => void;
+  onSelectPlan?: (planId: string) => void;
 }
 
+// Compatibility component for older page imports. Amounts and descriptions
+// come from the same approved support configuration as the live checkout.
 export function ProductGrid({ onSelectPlan }: ProductGridProps) {
-    const [selectedModalPlan, setSelectedModalPlan] = useState<string | null>(null);
-    const [customAmount, setCustomAmount] = useState<string>("");
-
-    const handleSelect = (planId: string) => {
-        if (onSelectPlan) {
-            onSelectPlan(planId);
-        } else {
-            setSelectedModalPlan(planId);
-        }
-    };
-
-    return (
-        <section id="donate" className="py-20 md:py-28 bg-white shadow-sm border-t border-brand-charcoal/5">
-            <div className="container">
-                <div className="mb-16 text-center max-w-3xl mx-auto">
-                    <span className="text-xs font-black uppercase tracking-[0.25em] text-brand-nero bg-brand-nero/10 px-3.5 py-1.5 rounded-full">
-                        Choose Your Impact Level
-                    </span>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-[900] text-brand-charcoal mt-4 mb-3 tracking-tight">
-                        Direct 1-to-1 Student Sponsorship
-                    </h2>
-                    <p className="text-brand-charcoal/60 text-base md:text-lg font-medium">
-                        Every dollar goes 100% directly to student tuition, nutrition, and school supplies. No admin cuts.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 lg:gap-6 xl:grid-cols-4">
-                    {/* Tier 1: $15 The Starter */}
-                    <div className="flex min-h-[34rem] flex-col justify-between rounded-3xl border border-brand-charcoal/10 bg-white p-6 shadow-sm transition-all duration-300 hover:border-brand-nero/30 hover:shadow-xl md:p-7">
-                        <div>
-                            <span className="inline-flex items-center gap-1 bg-brand-nero/10 text-brand-nero text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
-                                The Starter
-                            </span>
-                            <h4 className="text-xl font-black text-brand-charcoal mb-1">
-                                Fund Their Mind
-                            </h4>
-                            <p className="text-3xl font-black text-brand-nero mb-2">
-                                $15 <span className="text-xs text-brand-charcoal/40 uppercase tracking-widest font-bold">one-time</span>
-                            </p>
-                            <p className="text-xs md:text-sm text-brand-charcoal/60 mb-6 font-medium">
-                                Complete set of textbooks + 12 notebooks for the academic year.
-                            </p>
-
-                            <ul className="space-y-2.5 mb-8 border-t border-brand-charcoal/5 pt-6">
-                                {[
-                                    "8 Government-approved Textbooks",
-                                    "12 Ruled Notebooks & Registers",
-                                    "Full Stationery & Geometry Kit",
-                                    "WhatsApp Delivery Photo Receipt",
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-start gap-2.5 text-xs md:text-sm font-semibold text-brand-charcoal/80">
-                                        <Check className="w-4 h-4 text-brand-nero shrink-0 mt-0.5" />
-                                        <span>{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={() => handleSelect("starter")}
-                            className="btn-brand w-full h-13 text-sm font-black rounded-xl py-3.5"
-                        >
-                            Give $15 Once
-                        </button>
-                    </div>
-
-                    {/* Tier 2: $25 Confidence */}
-                    <div className="flex min-h-[34rem] flex-col justify-between rounded-3xl border border-brand-charcoal/10 bg-white p-6 shadow-sm transition-all duration-300 hover:border-brand-nero/30 hover:shadow-xl md:p-7">
-                        <div>
-                            <span className="inline-flex items-center gap-1 bg-brand-nero/10 text-brand-nero text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
-                                Dignity &amp; Pride
-                            </span>
-                            <h4 className="text-xl font-black text-brand-charcoal mb-1">
-                                Uniform &amp; Shoes
-                            </h4>
-                            <p className="text-3xl font-black text-brand-nero mb-2">
-                                $25 <span className="text-xs text-brand-charcoal/40 uppercase tracking-widest font-bold">one-time</span>
-                            </p>
-                            <p className="text-xs md:text-sm text-brand-charcoal/60 mb-6 font-medium">
-                                Two tailored uniform sets, school bag, and sturdy leather shoes.
-                            </p>
-
-                            <ul className="space-y-2.5 mb-8 border-t border-brand-charcoal/5 pt-6">
-                                {[
-                                    "2 Custom Tailored School Uniforms",
-                                    "1 Sturdy Waterproof School Bag",
-                                    "Black Leather Shoes & White Socks",
-                                    "Before & After Student Photo",
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-start gap-2.5 text-xs md:text-sm font-semibold text-brand-charcoal/80">
-                                        <Check className="w-4 h-4 text-brand-nero shrink-0 mt-0.5" />
-                                        <span>{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={() => handleSelect("uniform")}
-                            className="btn-brand w-full h-13 text-sm font-black rounded-xl py-3.5"
-                        >
-                            Give $25 Once
-                        </button>
-                    </div>
-
-                    {/* Tier 3: $30/mo GUARDIAN - FEATURED */}
-                    <div className="relative z-10 flex min-h-[36rem] flex-col justify-between rounded-3xl border-2 border-brand-nero bg-brand-charcoal p-6 shadow-2xl transition-transform duration-300 lg:-translate-y-2 md:p-7">
-                        <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
-                            <Crown className="w-32 h-32 text-white" />
-                        </div>
-
-                        <div>
-                            <span className="inline-flex items-center gap-1.5 bg-brand-nero text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4 shadow-md">
-                                <Sparkles size={12} /> Most Impact
-                            </span>
-                            <h4 className="text-xl font-black text-white mb-1">
-                                Become a Guardian
-                            </h4>
-                            <p className="text-4xl font-black text-brand-nero mb-2">
-                                $30 <span className="text-xs text-white/50 uppercase tracking-widest font-bold">/month</span>
-                            </p>
-                            <p className="text-xs md:text-sm text-white/70 mb-6 font-medium">
-                                Sponsor YOUR assigned student from primary to university.
-                            </p>
-
-                            <div className="grid grid-cols-2 gap-3 mb-6">
-                                <div className="bg-white/5 rounded-2xl p-3.5 border border-white/10">
-                                    <p className="text-[9px] font-black text-brand-nero uppercase tracking-widest mb-2">
-                                        You cover:
-                                    </p>
-                                    <ul className="space-y-1 text-[11px] font-bold text-white/90">
-                                        <li>&bull; Full monthly tuition</li>
-                                        <li>&bull; Daily hot lunch</li>
-                                        <li>&bull; All books &amp; kits</li>
-                                        <li>&bull; Health checkups</li>
-                                    </ul>
-                                </div>
-                                <div className="bg-white/5 rounded-2xl p-3.5 border border-white/10">
-                                    <p className="text-[9px] font-black text-brand-nero uppercase tracking-widest mb-2">
-                                        You receive:
-                                    </p>
-                                    <ul className="space-y-1 text-[11px] font-bold text-white/90">
-                                        <li>&bull; Photo + student ID</li>
-                                        <li>&bull; Weekly video update</li>
-                                        <li>&bull; Term report cards</li>
-                                        <li>&bull; Direct WhatsApp line</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <button
-                                type="button"
-                                onClick={() => handleSelect("monthly")}
-                                className="btn-brand w-full h-14 text-sm md:text-base font-black rounded-xl shadow-lg hover:shadow-xl"
-                            >
-                                YES, I&apos;LL BE A GUARDIAN
-                            </button>
-                            <p className="text-center text-[10px] text-white/40 font-bold mt-2.5 uppercase tracking-widest">
-                                Cancel Anytime &bull; 100% Transparent
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Tier 4: Custom Legacy Tier */}
-                    <div className="flex min-h-[34rem] flex-col justify-between rounded-3xl border border-brand-charcoal/10 bg-white p-6 shadow-sm transition-all duration-300 hover:border-brand-nero/30 hover:shadow-xl md:p-7">
-                        <div>
-                            <span className="inline-flex items-center gap-1 bg-brand-nero/10 text-brand-nero text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
-                                Build Legacy
-                            </span>
-                            <h4 className="text-xl font-black text-brand-charcoal mb-1">
-                                Custom Sponsorship
-                            </h4>
-                            <p className="text-3xl font-black text-brand-nero mb-2">
-                                Custom
-                            </p>
-                            <p className="text-xs md:text-sm text-brand-charcoal/60 mb-6 font-medium">
-                                Fund multiple students, a whole classroom, or a campus lab.
-                            </p>
-
-                            <ul className="space-y-2 mb-6 border-t border-brand-charcoal/5 pt-6 text-xs md:text-sm font-semibold text-brand-charcoal/80">
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-brand-nero shrink-0" />
-                                    <span>$360: Full Year for 1 Child</span>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-brand-nero shrink-0" />
-                                    <span>$1,000: STEM Lab Equipment</span>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-brand-nero shrink-0" />
-                                    <span>$3,000: Sponsor a Whole Grade</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="space-y-3">
-                            <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-charcoal/50 font-black text-sm">
-                                    $
-                                </span>
-                                <input
-                                    type="number"
-                                    placeholder="Enter amount"
-                                    value={customAmount}
-                                    onChange={(e) => setCustomAmount(e.target.value)}
-                                    className="w-full h-12 pl-8 pr-4 rounded-xl border border-brand-charcoal/15 text-sm font-bold text-brand-charcoal focus:border-brand-nero focus:outline-none"
-                                />
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => handleSelect("custom")}
-                                className="w-full h-12 bg-brand-charcoal text-white hover:bg-brand-charcoal/90 rounded-xl text-sm font-black transition-all"
-                            >
-                                Let&apos;s Talk
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {selectedModalPlan && (
-                <PaymentModal
-                    isOpen={true}
-                    supportId={
-                        selectedModalPlan === "starter"
-                            ? "starter-kit"
-                            : selectedModalPlan === "uniform"
-                            ? "dignity-uniform"
-                            : selectedModalPlan === "monthly"
-                            ? "guardian-monthly"
-                            : "custom"
-                    }
-                    onClose={() => setSelectedModalPlan(null)}
-                />
-            )}
-        </section>
-    );
+  const options = [...supportOptions].sort((a, b) => Number(b.recurring) - Number(a.recurring));
+  return (
+    <section id="donate" className="bg-white py-16 md:py-24">
+      <div className="container">
+        <p className="eyebrow">Ways to support</p>
+        <h2 className="mt-4 max-w-[18ch]">Choose the support that feels right.</h2>
+        <p className="mt-5 max-w-[60ch] text-lg text-secondary">Each selection shows the amount and designation before you continue to hosted PayPro checkout.</p>
+        <div className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {options.map(option => {
+            const content = <>
+              {option.recurring && <span className="support-badge bg-[#e8f3ea] text-[#075e2e]">Featured Guardian</span>}
+              <span className="block"><strong className="block font-display text-2xl font-extrabold tabular-nums">PKR {option.amountPkr.toLocaleString()}</strong><span className="mt-1 block font-bold text-secondary">{option.recurring ? "Monthly designation" : "One-time"} · {option.label}</span><span className="mt-4 block text-base text-secondary">{option.description}</span></span>
+              <span className="support-card__cta inline-flex min-h-11 items-center gap-2 self-start rounded-xl border border-brand-nero px-4 py-2 font-bold text-[#075e2e]">Select package <ArrowRight size={17} aria-hidden="true" /></span>
+            </>;
+            return onSelectPlan
+              ? <button key={option.id} type="button" onClick={() => onSelectPlan(option.id)} className="support-card text-left hover:border-brand-nero">{content}</button>
+              : <Link key={option.id} href={`/donate?support=${option.id}`} className="support-card hover:border-brand-nero">{content}</Link>;
+          })}
+          {onSelectPlan
+            ? <button type="button" onClick={() => onSelectPlan("custom")} className="support-card text-left hover:border-brand-nero"><span className="block"><strong className="block font-display text-2xl font-extrabold">Your amount</strong><span className="mt-1 block font-bold text-secondary">One-time · Custom support</span><span className="mt-4 block text-base text-secondary">Choose an amount and review it before payment.</span></span><span className="support-card__cta inline-flex min-h-11 items-center gap-2 self-start rounded-xl border border-brand-nero px-4 py-2 font-bold text-[#075e2e]">Choose an amount <ArrowRight size={17} aria-hidden="true" /></span></button>
+            : <Link href="/donate?support=custom" className="support-card hover:border-brand-nero"><span className="block"><strong className="block font-display text-2xl font-extrabold">Your amount</strong><span className="mt-1 block font-bold text-secondary">One-time · Custom support</span><span className="mt-4 block text-base text-secondary">Choose an amount and review it before payment.</span></span><span className="support-card__cta inline-flex min-h-11 items-center gap-2 self-start rounded-xl border border-brand-nero px-4 py-2 font-bold text-[#075e2e]">Choose an amount <ArrowRight size={17} aria-hidden="true" /></span></Link>}
+        </div>
+      </div>
+    </section>
+  );
 }

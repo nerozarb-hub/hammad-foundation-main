@@ -1,98 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Minus, HelpCircle } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 
-interface FAQItem {
-  q: string;
-  a: string;
-}
-
-const faqs: FAQItem[] = [
-  {
-    q: "How do I know the money actually goes to the student?",
-    a: "Support is initiated through YZ Educational Services with the recipient and Hammad Foundation designation clearly shown. Public programme updates and verified receipts are published only when backed by on-the-ground records.",
-  },
-  {
-    q: "What if my sponsored student drops out or their family moves?",
-    a: "The school team explains any programme or enrollment change directly. Contact the school administration for current student status or YZ for any payment-related updates.",
-  },
-  {
-    q: "Who receives a support payment?",
-    a: "Payments are received by YZ Educational Services (Private) Limited (SECP CUIN 0326364) and designated specifically for Hammad Foundation. The platform maintains transparent corporate records and verified payment tracking.",
-  },
-  {
-    q: "Can I meet my student in person if I visit Lahore?",
-    a: "Yes. We encourage supporters to visit the campus on Barki Road. Contact the school team in advance so visiting hours and student safeguarding procedures can be properly arranged.",
-  },
-  {
-    q: "What if I need to cancel recurring support?",
-    a: "Cancellation and refund policies are clearly stated. You can cancel recurring monthly Guardian sponsorships anytime by contacting the support team with your order reference.",
-  },
-  {
-    q: "Why sponsor 1-to-1 instead of donating to a large pooled NGO?",
-    a: "Direct 1-to-1 matching gives complete personal accountability. You receive an assigned student's photo, background, examination report cards, and regular video updates instead of vague pooled promises.",
-  },
-  {
-    q: "How can I verify information before supporting?",
-    a: "Review our SECP registration (CUIN 0326364), visit our Barki Road campus in Lahore, or contact Director Sir Ali Choudhary directly on WhatsApp with any specific question.",
-  },
+const faqs = [
+  ["What does Hammad Foundation do?", "Hammad Foundation is dedicated to helping people access education. This website documents its Lahore school community, current support options, and how payments are handled."],
+  ["Who receives a support payment?", "Payments are received by YZ Educational Services (Private) Limited (SECP CUIN 0326364) and designated specifically for Hammad Foundation."],
+  ["Can I choose a support package?", "Yes. Choose an available support option or enter a custom amount on the support page before you continue to checkout."],
+  ["Is payment secure?", "The secure payment flow is hosted through PayPro. The recipient and Hammad Foundation designation are shown before a payment is initiated."],
+  ["Can I support monthly?", "You can choose the Guardian monthly designation. The current PayPro checkout creates one payment; it does not set up an automatic recurring charge. For refund questions, use the stated policy and include your order reference."],
+  ["How can I verify the organisation?", "Review the public relationship with YZ Educational Services, CUIN 0326364, and the transparency information. You may also contact the school team about campus arrangements."],
 ];
 
 export function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const toggle = (idx: number) => {
-    setOpenIndex(openIndex === idx ? null : idx);
-  };
-
-  return (
-    <section id="faq" className="py-20 md:py-28 bg-white border-t border-brand-charcoal/5">
-      <div className="container max-w-4xl">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.25em] text-brand-nero bg-brand-nero/10 px-4 py-1.5 rounded-full">
-            <HelpCircle size={14} /> Honest Answers
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-[900] text-brand-charcoal mt-4 mb-3 tracking-tight">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-base sm:text-lg text-brand-charcoal/70 font-medium">
-            Direct, unvarnished answers about student sponsorship, fund tracking, and visits.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {faqs.map((faq, i) => {
-            const isOpen = openIndex === i;
-            return (
-              <div
-                key={i}
-                className="border border-brand-charcoal/10 rounded-2xl overflow-hidden bg-brand-gray-50/50 hover:bg-white hover:border-brand-nero/30 transition-all shadow-sm"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggle(i)}
-                  className="w-full flex items-center justify-between p-6 text-left cursor-pointer"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-black text-brand-charcoal text-base md:text-lg pr-6">
-                    {faq.q}
-                  </span>
-                  <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-brand-charcoal/10 text-brand-charcoal shadow-sm">
-                    {isOpen ? <Minus size={16} /> : <Plus size={16} />}
-                  </div>
-                </button>
-
-                {isOpen && (
-                  <div className="px-6 pb-6 pt-1 text-sm md:text-base text-brand-charcoal/75 leading-relaxed font-medium border-t border-brand-charcoal/5">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
+  const [open, setOpen] = useState<number | null>(0);
+  return <section id="faq" className="bg-brand-gray-50 py-16 md:py-24"><div className="container max-w-5xl"><div className="grid gap-7 border-b border-brand-charcoal/12 pb-10 md:grid-cols-[.8fr_1.2fr] md:items-end"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-brand-nero">Questions</p><h2 className="mt-4 text-4xl sm:text-5xl">Clear answers before you give.</h2></div><p className="max-w-xl text-base leading-relaxed body-muted md:justify-self-end">The essentials of payment identity, support options, and public accountability.</p></div><div className="border-b border-brand-charcoal/12">{faqs.map(([question, answer], index) => { const expanded = open === index; return <div key={question} className="border-t border-brand-charcoal/12"><button type="button" onClick={() => setOpen(expanded ? null : index)} className="flex min-h-[68px] w-full items-center justify-between gap-5 py-4 text-left text-base font-semibold sm:text-lg" aria-expanded={expanded}><span>{question}</span><span className="flex h-9 w-9 shrink-0 items-center justify-center border border-brand-charcoal/15">{expanded ? <Minus size={17} /> : <Plus size={17} />}</span></button>{expanded && <div className="max-w-3xl pb-6 pr-10 text-base leading-relaxed body-muted">{answer}</div>}</div>; })}</div></div></section>;
 }
