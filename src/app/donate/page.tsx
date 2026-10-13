@@ -1,5 +1,7 @@
 "use client";
 
+import { JazzCashDonation } from "@/components/jazzcash-donation";
+
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -101,7 +103,8 @@ function DonateContent() {
         </section>
       </form>
       <aside className="space-y-6 lg:sticky lg:top-24 lg:col-span-5"><section className="hidden rounded-2xl lg:block border border-brand-charcoal/15 bg-white p-6 sm:p-8"><h2 className="!font-sans !text-2xl !font-bold !tracking-normal">Your support summary</h2><dl className="support-summary mt-5 divide-y divide-brand-charcoal/15 border-y border-brand-charcoal/15"><div className="grid gap-1 py-3 sm:flex sm:justify-between sm:gap-3"><dt>Amount</dt><dd className="font-bold tabular-nums">{amountText(amount)}</dd></div><div className="grid gap-1 py-3 sm:flex sm:justify-between sm:gap-3"><dt>Frequency</dt><dd className="sm:text-right">{isMonthly ? "Monthly designation · one payment" : "One-time"}</dd></div><div className="grid gap-1 py-3 sm:flex sm:justify-between sm:gap-3"><dt>Recipient</dt><dd className="font-bold sm:text-right">{paymentDisclosure.recipientPublicName}</dd></div><div className="grid gap-1 py-3 sm:flex sm:justify-between sm:gap-3"><dt>Designation</dt><dd>{paymentDisclosure.designation}</dd></div><div className="grid gap-1 py-3 sm:flex sm:justify-between sm:gap-3"><dt>Next step</dt><dd>Hosted PayPro checkout</dd></div></dl><p className="mt-5 text-base text-secondary">{paymentDisclosure.statement} <Link href="/transparency" className="text-brand-nero  ">Review the payment relationship</Link>.</p></section>
-      <section className="border-t border-brand-charcoal/20 pt-5"><div className="flex items-center justify-between gap-3"><h2 className="!font-sans !text-xl !font-bold !tracking-normal">Direct bank transfer</h2><button type="button" onClick={copyBank} className="btn-outline shrink-0">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copied" : "Copy details"}</button></div><p className="mt-2 text-base text-secondary">Supporters in Pakistan can also transfer directly to the account shown below:</p><dl className="mt-4 space-y-2 text-base"><div><dt className="font-bold">Bank</dt><dd>Meezan Bank Ltd</dd></div><div><dt className="font-bold">Account title</dt><dd>YZ Educational Services</dd></div><div><dt className="font-bold">IBAN</dt><dd className="break-all tabular-nums">PK28MEZN0001234567890123</dd></div></dl></section></aside>
+      <section className="border-t border-brand-charcoal/20 pt-5"><div className="flex items-center justify-between gap-3"><h2 className="!font-sans !text-xl !font-bold !tracking-normal">Direct bank transfer</h2><button type="button" onClick={copyBank} className="btn-outline shrink-0">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copied" : "Copy details"}</button></div><p className="mt-2 text-base text-secondary">Supporters in Pakistan can also transfer directly to the account shown below:</p><dl className="mt-4 space-y-2 text-base"><div><dt className="font-bold">Bank</dt><dd>Meezan Bank Ltd</dd></div><div><dt className="font-bold">Account title</dt><dd>YZ Educational Services</dd></div><div><dt className="font-bold">IBAN</dt><dd className="break-all tabular-nums">PK28MEZN0001234567890123</dd></div></dl></section>
+      <JazzCashDonation /></aside>
     </div>
   </div></div>;
 }
